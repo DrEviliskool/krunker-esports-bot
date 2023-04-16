@@ -17,7 +17,7 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
         "292474867272515606", //Sakurasou
         "259526415341322250", //tjwyk
         "154052900425826304", //Wingman
-      ] // ONLY PEOPLE WITH ACCESS
+    ] // ONLY PEOPLE WITH ACCESS
 
 
     if (!OWNERS.some(ID => msg.member?.id.includes(ID))) {
@@ -25,42 +25,44 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     }
 
     const player = msg.mentions?.members?.first() || (await msg.guild?.members.fetch(args[0]))
+    if (!player) return msg.channel.send('Example usage: ?compunban 123456789')
 
-    if (!player) {
-      return msg.channel.send('Example usage: ?unban 123456789')
-    }
-    
+
     const serverarray = [
-      '672146248182136863', //kpc
-      '996161328546861126', //nack
-      '832245400505155595', //cka
-      '623849289403334656' //krunker esports server
+        '672146248182136863', //kpc
+        '996161328546861126', //nack
+        '832245400505155595', //cka
+        '623849289403334656' //krunker esports server
     ]
-    const kpclog = client.channels.cache.get('801552076726730752')  as TextChannel
+    const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
     const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
-    const ckalog = client.channels.cache.get('832517548355747840')  as TextChannel
-    const esport = client.channels.cache.get('1097169881222365257')  as TextChannel
+    const ckalog = client.channels.cache.get('832517548355747840') as TextChannel
+    const esport = client.channels.cache.get('1097169881222365257') as TextChannel
 
     serverarray.forEach(server => {
-      client.guilds.fetch(server).then(guild => {
+        client.guilds.fetch(server).then(guild => {
 
-        guild.bans.remove(player!).catch(err => {
-            console.log(err)
+            guild.bans.fetch(player!)
+
         })
-
-      })
 
     })
 
+    const dmembed = new EmbedBuilder()
+        .setDescription(`Hello ${player.user.username}, you're esport ban has expired and you are now unbanned!`)
+        .setColor("Green")
+        .setTimestamp()
 
-      const unbanembed = new EmbedBuilder()
-      .setAuthor({ name: `${msg.author.tag} (${msg.author.id})`, iconURL: msg.author.displayAvatarURL.toString() })
-      .setTitle(`**${player.user.tag}** (${player.user.id}) was unbanned.`)
-      .setColor("Green")
-      .setTimestamp()
+    player.send({ embeds: [dmembed] })
 
-      kpclog.send({ embeds: [unbanembed] });
-      ncklog.send({ embeds: [unbanembed] });
-      ckalog.send({ embeds: [unbanembed] });
-      esport.send({ embeds: [unbanembed] });
+    const unbanembed = new EmbedBuilder()
+        .setAuthor({ name: `${msg.author.tag} (${msg.author.id})`, iconURL: msg.author.displayAvatarURL.toString() })
+        .setTitle(`**${player.user.tag}** (${player.user.id}) was unbanned.`)
+        .setColor("Green")
+        .setTimestamp()
+
+    kpclog.send({ embeds: [unbanembed] });
+    ncklog.send({ embeds: [unbanembed] });
+    ckalog.send({ embeds: [unbanembed] });
+    esport.send({ embeds: [unbanembed] });
 }

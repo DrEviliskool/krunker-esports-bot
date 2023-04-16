@@ -55,15 +55,15 @@ export const EndTourney = async (msg: Message, args: string[], client: Client) =
 
         const allteamnames = tournament.teams.map(theteam => theteam.teamName.trim())
 
-        msg.channel.send(`What team is **first** in the tournament?\n\n Teams: ${allteamnames.join(", ")}`).then(msg2 => {
+        msg.channel.send(`What team is **first** in the tournament?\n\nTeams:\n${allteamnames.join("\n")}`).then(msg2 => {
             msg2.channel.awaitMessages({ filter: filter, max: 1, time: 25000, errors: ["time"] }).then(async (messages) => {
                 let firstteam = messages.first().content
 
-                msg.channel.send(`What team is **second** in the tournament\n\n Teams: ${allteamnames.join(", ")}`).then(msg2 => {
+                msg.channel.send(`What team is **second** in the tournament\n\nTeams:\n${allteamnames.join("\n")}`).then(msg2 => {
                     msg2.channel.awaitMessages({ filter: filter, max: 1, time: 25000, errors: ["time"] }).then(messages => {
                         let secondteam = messages.first().content
 
-                        msg.channel.send(`What team is **third** in the tournament?\n\n Teams: ${allteamnames.join(", ")}`).then(msg2 => {
+                        msg.channel.send(`What team is **third** in the tournament?\n\nTeams:\n${allteamnames.join("\n")}`).then(msg2 => {
                             msg2.channel.awaitMessages({ filter: filter, max: 1, time: 25000, errors: ["time"] }).then(async (messages) => {
                                 let thirdteam = messages.first().content
 

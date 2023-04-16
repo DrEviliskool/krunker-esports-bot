@@ -4,7 +4,7 @@ import humanizeDuration from "humanize-duration"
 
 export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
-    const OWNERS = [
+  const OWNERS = [
         "920717213965643847", //THE ULTIMATE NOONER
         "937071829410000987", //DrEvil
         "356052289728806912", //Duprious
@@ -27,15 +27,22 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     }
 
     const player = msg.mentions?.members?.first() || (await msg.guild?.members.fetch(args[0]))
-    const time = ms(args[1])
-    const prettytime = humanizeDuration(time, { largest: 2 } )
+    if (!player || !args[0]) return msg.channel.send('Example usage: ?ban **123456789** 90d Account sharing')
+
+    const time = args[1]
+    if (!time) return msg.channel.send('Example usage: ?ban 123456789 **90d** Account sharing')
+
+    const mstime = ms(time)
+
+    const prettytime = humanizeDuration(mstime, { largest: 2 } )
     const reason = args.slice(2).join(" ")
+
+    if (!reason) return msg.channel.send('Example usage: ?ban 123456789 90d **Account sharing**')
 
     if (!player || !time || !reason) {
       return msg.channel.send('Example usage: ?ban 123456789 90d Account sharing')
     }
 
-    console.log(prettytime)
     
 
 
@@ -52,24 +59,36 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
     serverarray.forEach(server => {
       client.guilds.fetch(server).then(guild => {
-        guild.bans.create(player!, {reason: reason }).catch(err => {
-          console.log(err)
-        })
+        guild.bans.create(player!, {reason: reason })
 
         setTimeout(() => {
 
           guild.bans.remove(player!)
 
-        }, time);
+        }, mstime);
 
       })
 
     })
 
+    const dmembed = new EmbedBuilder()
+    .setDescription(`Hello ${player.user.username}, you have been esport banned for **${prettytime}**.\n\nReason: ${reason}`)
+    .setColor("Green")
+    .setTimestamp()
+
+    player.send({ embeds: [dmembed] })
+
     setTimeout(() => {
 
+      const dmembed = new EmbedBuilder()
+      .setDescription(`Hello ${player.user.username}, you're esport ban has expired and you are now unbanned!`)
+      .setColor("Green")
+      .setTimestamp()
+
+      player.send({ embeds: [dmembed] })
+
       const unbanembed = new EmbedBuilder()
-      .setAuthor({ name: `${player.user.tag} (${player.user.id})`, iconURL: player.user.displayAvatarURL.toString() })
+      .setAuthor({ name: `${player.user.tag} (${player.user.id})` })
       .setTitle('Was unbanned automatically, time expired.')
       .setColor("Green")
       .setTimestamp()
@@ -79,12 +98,12 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
       ckalog.send({ embeds: [unbanembed] });
       esport.send({ embeds: [unbanembed] });
       
-    }, time);
+    }, mstime);
 
     const banembed = new EmbedBuilder()
     .setTitle('New Comp Ban!')
     .setDescription(`**${player?.user.tag}** (${player?.user.id}) has been comp banned for **${prettytime}**\n\nReason: **${reason}**`)
-    .setAuthor({ name: `${msg.author.tag} (${msg.author.id})`, iconURL: msg.author.displayAvatarURL.toString() })
+    .setAuthor({ name: `${msg.author.tag} (${msg.author.id})`})
     .setColor('Red')
     .setTimestamp()
 

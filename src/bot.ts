@@ -7,6 +7,7 @@ import {
   DelCategory, 
   AllTourneys,
   CompBan,
+  CompUnban,
 
 } from './commands/Commands';
 
@@ -75,6 +76,9 @@ client.on('messageCreate', (msg) => {
       break;
     case 'compban':
       CompBan(msg, args, client)
+      break;
+    case 'compunban':
+      CompUnban(msg, args, client)
       break;
     
   }
