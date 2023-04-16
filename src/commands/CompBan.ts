@@ -52,13 +52,39 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
     serverarray.forEach(server => {
       client.guilds.fetch(server).then(guild => {
-        guild.bans.create(player!, {reason: reason })
+        guild.bans.create(player!, {reason: reason }).catch(err => {
+          console.log(err)
+        })
+
+        setTimeout(() => {
+
+          guild.bans.remove(player!)
+
+        }, time);
+
       })
+
     })
+
+    setTimeout(() => {
+
+      const unbanembed = new EmbedBuilder()
+      .setAuthor({ name: `${player.user.tag} (${player.user.id})`, iconURL: player.user.displayAvatarURL.toString() })
+      .setTitle('Was unbanned automatically, time expired.')
+      .setColor("Green")
+      .setTimestamp()
+
+      kpclog.send({ embeds: [unbanembed] });
+      ncklog.send({ embeds: [unbanembed] });
+      ckalog.send({ embeds: [unbanembed] });
+      esport.send({ embeds: [unbanembed] });
+      
+    }, time);
 
     const banembed = new EmbedBuilder()
     .setTitle('New Comp Ban!')
     .setDescription(`**${player?.user.tag}** (${player?.user.id}) has been comp banned for **${prettytime}**\n\nReason: **${reason}**`)
+    .setAuthor({ name: `${msg.author.tag} (${msg.author.id})`, iconURL: msg.author.displayAvatarURL.toString() })
     .setColor('Red')
     .setTimestamp()
 
