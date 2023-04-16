@@ -1,4 +1,4 @@
-import { Client, EmbedBuilder, Message, TextChannel } from "discord.js";
+import { Client, EmbedBuilder, Message, TextChannel, embedLength } from "discord.js";
 
 export const CompUnban = async (msg: Message, args: string[], client: Client) => {
 
@@ -24,7 +24,9 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
         return
     }
 
-    const player = msg.mentions?.members?.first() || (await msg.guild?.members.fetch(args[0]))
+
+    const player = client.users.fetch(args[0])
+
     if (!player) return msg.channel.send('Example usage: ?compunban 123456789')
 
 
@@ -40,24 +42,24 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     const esport = client.channels.cache.get('1097169881222365257') as TextChannel
 
     serverarray.forEach(server => {
-        client.guilds.fetch(server).then(guild => {
+        client.guilds.fetch(server).then(async (guild) => {
 
-            guild.bans.fetch(player!)
+            guild.bans.remove((await player))
 
         })
 
     })
 
     const dmembed = new EmbedBuilder()
-        .setDescription(`Hello ${player.user.username}, you're esport ban has expired and you are now unbanned!`)
+        .setDescription(`Hello ${(await player).username}, you're esport ban has expired and you are now unbanned!`)
         .setColor("Green")
-        .setTimestamp()
+        .setTimestamp();
 
-    player.send({ embeds: [dmembed] })
+    (await player).send({ embeds: [dmembed] })
 
     const unbanembed = new EmbedBuilder()
-        .setAuthor({ name: `${msg.author.tag} (${msg.author.id})`, iconURL: msg.author.displayAvatarURL.toString() })
-        .setTitle(`**${player.user.tag}** (${player.user.id}) was unbanned.`)
+        .setAuthor({ name: `${msg.author.tag} (${msg.author.id})` })
+        .setTitle(`**${(await player).tag}** (${(await player).id}) was unbanned.`)
         .setColor("Green")
         .setTimestamp()
 
@@ -65,4 +67,12 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     ncklog.send({ embeds: [unbanembed] });
     ckalog.send({ embeds: [unbanembed] });
     esport.send({ embeds: [unbanembed] });
+
+    const doneembed = new EmbedBuilder()
+    .setTitle('Successfully done!')
+    .setDescription(`**${(await player).tag}**'s esport ban has been removed!`)
+    .setColor("Green")
+    .setTimestamp();
+
+    msg.channel.send({ embeds: [doneembed] })
 }

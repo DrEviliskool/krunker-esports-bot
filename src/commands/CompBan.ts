@@ -112,4 +112,12 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     ckalog.send({ embeds: [banembed] });
     esport.send({ embeds: [banembed] });
 
+    const doneembed = new EmbedBuilder()
+    .setTitle('Successfully done!')
+    .setDescription(`**${player.user.tag}** has been esport banned for **${prettytime}**.\n\nReason: **${reason}**`)
+    .setColor("Green")
+    .setTimestamp();
+
+    msg.channel.send({ embeds: [doneembed] })
+
 }
