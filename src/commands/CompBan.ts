@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, Guild, GuildMember, Message, TextChannel, User } from "discord.js";
 import ms from "ms";
 import humanizeDuration from "humanize-duration"
-import { redisClient } from "/Users/drevi/Downloads/krunker-esports-bot/src/bot";
+import { redisClient } from "src/bot";
 export const CompBan = async (msg: Message, args: string[], client: Client) => {  
 
   const OWNERS = [
@@ -22,16 +22,17 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   ] // ONLY PEOPLE WITH ACCESS
 
   const serverarray = [
-    '672146248182136863', //kpc
-    '996161328546861126', //nack
-    '832245400505155595', //cka
-    '623849289403334656' //krunker esports server
+    '1086657051113029702', //extra
+    // '672146248182136863', //kpc
+    // '996161328546861126', //nack
+    // '832245400505155595', //cka
+    // '623849289403334656' //krunker esports server
   ]
 
-  const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
-  const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
-  const ckalog = client.channels.cache.get('832517548355747840') as TextChannel
-  const esport = client.channels.cache.get('1097169881222365257') as TextChannel
+  const kpclog = client.channels.cache.get('1091733571397488660') as TextChannel //801552076726730752
+  // const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
+  // const ckalog = client.channels.cache.get('832517548355747840') as TextChannel
+  // const esport = client.channels.cache.get('1097169881222365257') as TextChannel
 
   if (!OWNERS.some(ID => msg.author?.id.includes(ID))) {
     return
@@ -129,9 +130,9 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     .setTimestamp()
 
   kpclog.send({ embeds: [banembed] });
-  ncklog.send({ embeds: [banembed] });
-  ckalog.send({ embeds: [banembed] });
-  esport.send({ embeds: [banembed] });
+  // ncklog.send({ embeds: [banembed] });
+  // ckalog.send({ embeds: [banembed] });
+  // esport.send({ embeds: [banembed] });
 
 
 
