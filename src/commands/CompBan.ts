@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, Guild, GuildMember, Message, TextChannel, User } from "discord.js";
 import ms from "ms";
 import humanizeDuration from "humanize-duration"
-import { redisClient } from "src/bot";
+import { redisClient } from "/Users/drevi/Downloads/krunker-esports-bot/src/bot";
 export const CompBan = async (msg: Message, args: string[], client: Client) => {  
 
   const OWNERS = [
@@ -22,17 +22,19 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   ] // ONLY PEOPLE WITH ACCESS
 
   const serverarray = [
-    '1086657051113029702', //extra
-    // '672146248182136863', //kpc
-    // '996161328546861126', //nack
-    // '832245400505155595', //cka
-    // '623849289403334656' //krunker esports server
+    // '1086657051113029702', //extra
+    '672146248182136863', //kpc
+    '996161328546861126', //nack
+    '832245400505155595', //cka
+    '623849289403334656' //krunker esports server
   ]
 
-  const kpclog = client.channels.cache.get('1091733571397488660') as TextChannel //801552076726730752
-  // const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
-  // const ckalog = client.channels.cache.get('832517548355747840') as TextChannel
-  // const esport = client.channels.cache.get('1097169881222365257') as TextChannel
+  const kpclog = client.channels.cache.get('801552076726730752') as TextChannel 
+  const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
+  const ckalog = client.channels.cache.get('832517548355747840') as TextChannel
+  const esport = client.channels.cache.get('1097169881222365257') as TextChannel
+  const admins = client.channels.cache.get('1060536650918281296') as TextChannel
+
 
   if (!OWNERS.some(ID => msg.author?.id.includes(ID))) {
     return
@@ -40,10 +42,8 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
 
 
-  const player = msg.mentions?.members?.first() || (await msg.guild?.members.fetch(args[0]))
+  const player = client.users.fetch(args[0])
   if (!player || !args[0]) return msg.channel.send('Example usage: ?ban **123456789** 90d Account sharing')
-
-
 
 
   const time = ms(args[1])
@@ -63,7 +63,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
   const seconds = time / 1000
 
-  const rediskey = `banned-${player.id}`
+  const rediskey = `banned-${(await player).id}`
 
 
 
@@ -85,22 +85,26 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
 
   
+  const dmembed = new EmbedBuilder()
+    .setDescription(`Hello ${(await player).username}, you have been esport banned for **${prettytime}**.\n\nReason: ${reason}`)
+    .setColor("Green")
+    .setTimestamp()
 
-
-  serverarray.forEach(server => {
-    client.guilds.fetch(server).then(guild => {
-      guild.bans.create(player!, { reason: reason })
-
+  ;(await player).send({ embeds: [dmembed] }).then(ok => {
+    
+    serverarray.forEach(server => {
+      client.guilds.fetch(server).then(async guild => {
+        guild.bans.create((await player), { reason: reason }).catch(async (err) => {
+          console.log(`Couldnt ban ${(await player).tag} in ${guild.name}`)
+        })
+  
+      })
+  
     })
 
   })
 
-  const dmembed = new EmbedBuilder()
-    .setDescription(`Hello ${player.user.username}, you have been esport banned for **${prettytime}**.\n\nReason: ${reason}`)
-    .setColor("Green")
-    .setTimestamp()
 
-  player.send({ embeds: [dmembed] })
 
 
 
@@ -125,21 +129,22 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
       
     )
     .setThumbnail((await client.guilds.fetch('623849289403334656')).iconURL())
-    .setAuthor({ name: `${player.user.tag} (${player.user.id})`, iconURL: player.displayAvatarURL() })
+    .setAuthor({ name: `${(await player).tag} (${(await player).id})`, iconURL: (await player).displayAvatarURL() })
     .setColor('Red')
     .setTimestamp()
 
   kpclog.send({ embeds: [banembed] });
-  // ncklog.send({ embeds: [banembed] });
-  // ckalog.send({ embeds: [banembed] });
-  // esport.send({ embeds: [banembed] });
+  ncklog.send({ embeds: [banembed] });
+  ckalog.send({ embeds: [banembed] });
+  esport.send({ embeds: [banembed] });
+  admins.send({ embeds: [banembed] })
 
 
 
 
   const currentchanneldoneemebed = new EmbedBuilder()
     .setTitle('Successfully done!')
-    .setDescription(`**${player.user.tag}** has been esport banned for **${prettytime}**.\n\nReason: **${reason}**`)
+    .setDescription(`**${(await player).tag}** has been esport banned for **${prettytime}**.\n\nReason: **${reason}**`)
     .setColor("Green")
     .setTimestamp();
 

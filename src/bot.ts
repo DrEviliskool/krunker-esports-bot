@@ -62,6 +62,8 @@ async function thesubscriber() {
   const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
   const ckalog = client.channels.cache.get('832517548355747840') as TextChannel
   const esport = client.channels.cache.get('1097169881222365257') as TextChannel
+  const admins = client.channels.cache.get('1060536650918281296') as TextChannel
+
 
 
   redisClient.sendCommand(['CONFIG', 'SET', 'notify-keyspace-events', 'xE'])
@@ -73,18 +75,18 @@ async function thesubscriber() {
     const unbanneduser = client.users.fetch(unbannedid)
 
     const serverarray = [
-      '1086657051113029702', //extra
-      // '672146248182136863', //kpc
-      // '996161328546861126', //nack
-      // '832245400505155595', //cka
-      // '623849289403334656' //krunker esports server
+      // '1086657051113029702', //extra
+      '672146248182136863', //kpc
+      '996161328546861126', //nack
+      '832245400505155595', //cka
+      '623849289403334656' //krunker esports server
     ]
 
     serverarray.forEach(server => {
       client.guilds.fetch(server).then(async (guild) => {
         guild.bans.remove((await unbanneduser)).catch(async (err) => {
 
-          msg.channel.send(`Couldnt unban ${(await unbanneduser).tag} in ${guild.name}`)
+          console.log(`Couldnt unban ${(await unbanneduser).tag} in ${guild.name}`)
         })
       })
     });
@@ -104,8 +106,6 @@ async function thesubscriber() {
     ; (await unbanneduser).send({ embeds: [dmunbanembed] }).catch(async err => {
       console.log(`Couldnt dm ${(await unbanneduser).tag}`)
     })
-
-        console.log(`${(await unbanneduser).tag} (${(await unbanneduser).id})` )
       
     const unbanembed = new EmbedBuilder()
       .setAuthor({ name: `${(await unbanneduser).tag} (${(await unbanneduser).id})` })
@@ -114,11 +114,12 @@ async function thesubscriber() {
       .setTimestamp();
     
     kpclog.send({ embeds: [unbanembed] });
-    // ncklog.send({ embeds: [unbanembed] });
-    // ckalog.send({ embeds: [unbanembed] });
-    // esport.send({ embeds: [unbanembed] });
+    ncklog.send({ embeds: [unbanembed] });
+    ckalog.send({ embeds: [unbanembed] });
+    esport.send({ embeds: [unbanembed] });
+    admins.send({ embeds: [unbanembed] });
 
-    console.log(`EXPIRED UNBAN: ${(await unbanneduser).tag} (${unbannedid})`)
+      console.log(`EXPIRED UNBAN: ${(await unbanneduser).tag} (${unbannedid})`)
   });
 }
 

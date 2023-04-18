@@ -1,4 +1,5 @@
 import { Client, EmbedBuilder, Message, TextChannel, embedLength } from "discord.js";
+import { redisClient } from "/Users/drevi/Downloads/krunker-esports-bot/src/bot";
 
 
 export const CompUnban = async (msg: Message, args: string[], client: Client) => {
@@ -41,6 +42,7 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
     const ckalog = client.channels.cache.get('832517548355747840') as TextChannel
     const esport = client.channels.cache.get('1097169881222365257') as TextChannel
+    const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
     serverarray.forEach(server => {
         client.guilds.fetch(server).then(async (guild) => {
@@ -67,15 +69,18 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     (await player).send({ embeds: [dmembed] })
 
     const unbanembed = new EmbedBuilder()
-        .setAuthor({ name: `${msg.author.tag} (${msg.author.id})` })
-        .setTitle(`**${(await player).tag}** (${(await player).id}) was unbanned.`)
-        .setColor("Green")
-        .setTimestamp()
+    .setTitle('New Esport UnBan!')
+    .setDescription(`Responsible Admin: ${msg.author.tag} (${msg.author.id})`)
+    .setThumbnail((await client.guilds.fetch('623849289403334656')).iconURL())
+    .setAuthor({ name: `${(await player).tag} (${(await player).id})`, iconURL: (await player).displayAvatarURL() })
+    .setColor('Red')
+    .setTimestamp()
 
     kpclog.send({ embeds: [unbanembed] });
     ncklog.send({ embeds: [unbanembed] });
     ckalog.send({ embeds: [unbanembed] });
     esport.send({ embeds: [unbanembed] });
+    admins.send({ embeds: [unbanembed] });
 
     const doneembed = new EmbedBuilder()
     .setTitle('Successfully done!')
@@ -84,4 +89,5 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     .setTimestamp();
 
     msg.channel.send({ embeds: [doneembed] })
+    redisClient.del(`banned-${(await player).id}`)
 }

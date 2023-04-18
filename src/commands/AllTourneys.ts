@@ -22,8 +22,12 @@ export const AllTourneys = async (msg: Message, args: String[], client: Client) 
         xhr.send();
     }
 
-    const orgname = args[0]
+    let orgname = args[0]
     if (!orgname) return msg.channel.send('Usage example: ?alltourneys kpc')
+
+    if (orgname == "krunker esports" || orgname == "esports" || orgname == "krunker" || orgname == "esport" ) {
+        orgname = "KrunkerEsports"
+    }
 
     loadJSON(`https://www.kchub.net/api/organization/${orgname}`, myData, 'jsonp');
 
