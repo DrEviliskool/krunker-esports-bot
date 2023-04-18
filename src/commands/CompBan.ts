@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, Guild, GuildMember, Message, TextChannel, User } from "discord.js";
 import ms from "ms";
 import humanizeDuration from "humanize-duration"
-import { redisClient } from "/Users/drevi/Downloads/krunker-esports-bot/src/bot";
+import { redisClient } from "../bot";
 export const CompBan = async (msg: Message, args: string[], client: Client) => {  
 
   const OWNERS = [
