@@ -22,7 +22,7 @@ export const EndTourney = async (msg: Message, args: string[], client: Client) =
       ] // ONLY PEOPLE WITH ACCESS
 
 
-    if (!OWNERS.some(ID => msg.member?.id.includes(ID))) {
+    if (!OWNERS.some(ID => msg.author?.id.includes(ID))) {
         return
     }
 

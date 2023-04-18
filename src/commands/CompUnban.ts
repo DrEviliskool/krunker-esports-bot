@@ -1,5 +1,6 @@
 import { Client, EmbedBuilder, Message, TextChannel, embedLength } from "discord.js";
 
+
 export const CompUnban = async (msg: Message, args: string[], client: Client) => {
 
     const OWNERS = [
@@ -20,7 +21,7 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     ] // ONLY PEOPLE WITH ACCESS
 
 
-    if (!OWNERS.some(ID => msg.member?.id.includes(ID))) {
+    if (!OWNERS.some(ID => msg.author?.id.includes(ID))) {
         return
     }
 
@@ -49,11 +50,19 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
         })
 
     })
+    
 
     const dmembed = new EmbedBuilder()
-        .setDescription(`Hello ${(await player).username}, you're esport ban has expired and you are now unbanned!`)
-        .setColor("Green")
-        .setTimestamp();
+    .setTitle('You have been esport unbanned!')
+    .setDescription('Here are all the server links:')
+    .addFields(
+      { name: `Krunker Esports:`, value: `[Click here!](https://discord.gg/9r6SeMQC3s)` },
+      { name: `Krunker Pro Ciruit (EU)`, value: `[Click here!](https://discord.gg/YPjBn5C)` },
+      { name: `NACK (NA)`, value: `[Click here!](https://discord.gg/nJmqWam3tj)` },
+      { name: `Competitive Krunker APAC (ASIA)`, value: `[Click here!](https://discord.gg/bRs2PVzZza)` },
+    )
+    .setColor("Green")
+    .setTimestamp();
 
     (await player).send({ embeds: [dmembed] })
 

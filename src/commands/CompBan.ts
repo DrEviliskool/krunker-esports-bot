@@ -1,123 +1,147 @@
 import { Client, EmbedBuilder, Guild, GuildMember, Message, TextChannel, User } from "discord.js";
 import ms from "ms";
 import humanizeDuration from "humanize-duration"
-
-export const CompBan = async (msg: Message, args: string[], client: Client) => {
+import { redisClient } from "/Users/drevi/Downloads/krunker-esports-bot/src/bot";
+export const CompBan = async (msg: Message, args: string[], client: Client) => {  
 
   const OWNERS = [
-        "920717213965643847", //THE ULTIMATE NOONER
-        "937071829410000987", //DrEvil
-        "356052289728806912", //Duprious
-        "815003739702034482", //Asokra
-        "321384844695437314", //JaySii
-        "369002352138518528", //brandon
-        "180504818555682816", //dojin
-        "257709390537162752", //nizzq
-        "521051554556542976", //Choco
-        "425726603427840000", //Perky
-        "316015067499855872", //ps6
-        "292474867272515606", //Sakurasou
-        "259526415341322250", //tjwyk
-        "154052900425826304", //Wingman
-      ] // ONLY PEOPLE WITH ACCESS
+    "920717213965643847", //THE ULTIMATE NOONER
+    "937071829410000987", //DrEvil
+    "356052289728806912", //Duprious
+    "815003739702034482", //Asokra
+    "321384844695437314", //JaySii
+    "369002352138518528", //brandon
+    "180504818555682816", //dojin
+    "257709390537162752", //nizzq
+    "521051554556542976", //Choco
+    "425726603427840000", //Perky
+    "316015067499855872", //ps6
+    "292474867272515606", //Sakurasou
+    "259526415341322250", //tjwyk
+    "154052900425826304", //Wingman
+  ] // ONLY PEOPLE WITH ACCESS
+
+  const serverarray = [
+    '672146248182136863', //kpc
+    '996161328546861126', //nack
+    '832245400505155595', //cka
+    '623849289403334656' //krunker esports server
+  ]
+
+  const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
+  const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
+  const ckalog = client.channels.cache.get('832517548355747840') as TextChannel
+  const esport = client.channels.cache.get('1097169881222365257') as TextChannel
+
+  if (!OWNERS.some(ID => msg.author?.id.includes(ID))) {
+    return
+  }
 
 
-    if (!OWNERS.some(ID => msg.member?.id.includes(ID))) {
-        return
-    }
 
-    const player = msg.mentions?.members?.first() || (await msg.guild?.members.fetch(args[0]))
-    if (!player || !args[0]) return msg.channel.send('Example usage: ?ban **123456789** 90d Account sharing')
-
-    const time = args[1]
-    if (!time) return msg.channel.send('Example usage: ?ban 123456789 **90d** Account sharing')
-
-    const mstime = ms(time)
-
-    const prettytime = humanizeDuration(mstime, { largest: 2 } )
-    const reason = args.slice(2).join(" ")
-
-    if (!reason) return msg.channel.send('Example usage: ?ban 123456789 90d **Account sharing**')
-
-    if (!player || !time || !reason) {
-      return msg.channel.send('Example usage: ?ban 123456789 90d Account sharing')
-    }
-
-    
+  const player = msg.mentions?.members?.first() || (await msg.guild?.members.fetch(args[0]))
+  if (!player || !args[0]) return msg.channel.send('Example usage: ?ban **123456789** 90d Account sharing')
 
 
-    const serverarray = [
-      '672146248182136863', //kpc
-      '996161328546861126', //nack
-      '832245400505155595', //cka
-      '623849289403334656' //krunker esports server
-    ]
-    const kpclog = client.channels.cache.get('801552076726730752')  as TextChannel
-    const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
-    const ckalog = client.channels.cache.get('832517548355747840')  as TextChannel
-    const esport = client.channels.cache.get('1097169881222365257')  as TextChannel
 
-    serverarray.forEach(server => {
-      client.guilds.fetch(server).then(guild => {
-        guild.bans.create(player!, {reason: reason })
 
-        setTimeout(() => {
+  const time = ms(args[1])
+  if (!time) return msg.channel.send('Example usage: ?ban 123456789 **90d** Account sharing')
+  const prettytime = humanizeDuration(time, { largest: 2 })
+  
 
-          guild.bans.remove(player!)
 
-        }, mstime);
+  
+  const reason = args.slice(2).join(" ")
+  if (!reason) return msg.channel.send('Example usage: ?ban 123456789 90d **Account sharing**')
 
-      })
+
+
+
+  if (!player || !time || !reason) return msg.channel.send('Example usage: ?ban 123456789 90d Account sharing')
+
+  const seconds = time / 1000
+
+  const rediskey = `banned-${player.id}`
+
+
+
+
+  if (seconds > 0) {
+
+    redisClient.set(rediskey, reason, { EX: seconds }).catch(ok => {
+      console.log('Err line 68 ', ok)
+    })
+
+
+  } else {
+
+    redisClient.set(rediskey, reason, { EX: seconds }).catch(ok => {
+      console.log('Err line 75 ', ok)
+    })
+  }
+
+
+
+  
+
+
+  serverarray.forEach(server => {
+    client.guilds.fetch(server).then(guild => {
+      guild.bans.create(player!, { reason: reason })
 
     })
 
-    const dmembed = new EmbedBuilder()
+  })
+
+  const dmembed = new EmbedBuilder()
     .setDescription(`Hello ${player.user.username}, you have been esport banned for **${prettytime}**.\n\nReason: ${reason}`)
     .setColor("Green")
     .setTimestamp()
 
-    player.send({ embeds: [dmembed] })
+  player.send({ embeds: [dmembed] })
 
-    setTimeout(() => {
 
-      const dmembed = new EmbedBuilder()
-      .setDescription(`Hello ${player.user.username}, you're esport ban has expired and you are now unbanned!`)
-      .setColor("Green")
-      .setTimestamp()
 
-      player.send({ embeds: [dmembed] })
 
-      const unbanembed = new EmbedBuilder()
-      .setAuthor({ name: `${player.user.tag} (${player.user.id})` })
-      .setTitle('Was unbanned automatically, time expired.')
-      .setColor("Green")
-      .setTimestamp()
 
-      kpclog.send({ embeds: [unbanembed] });
-      ncklog.send({ embeds: [unbanembed] });
-      ckalog.send({ embeds: [unbanembed] });
-      esport.send({ embeds: [unbanembed] });
+
+
+
+
+
+
+
+
+
+
+  const banembed = new EmbedBuilder()
+    .setTitle('New Esport Ban!')
+    .addFields(
+      { name: `Responsible Admin:`, value: `${msg.author.tag} (${msg.author.id})`, inline: true},
+      { name: `Reason:`, value: `${reason}`, inline: true },
+      { name: `Time:`, value: `${prettytime}`, inline: true },
       
-    }, mstime);
-
-    const banembed = new EmbedBuilder()
-    .setTitle('New Comp Ban!')
-    .setDescription(`**${player?.user.tag}** (${player?.user.id}) has been comp banned for **${prettytime}**\n\nReason: **${reason}**`)
-    .setAuthor({ name: `${msg.author.tag} (${msg.author.id})`})
+    )
+    .setThumbnail((await client.guilds.fetch('623849289403334656')).iconURL())
+    .setAuthor({ name: `${player.user.tag} (${player.user.id})`, iconURL: player.displayAvatarURL() })
     .setColor('Red')
     .setTimestamp()
 
-    kpclog.send({ embeds: [banembed] });
-    ncklog.send({ embeds: [banembed] });
-    ckalog.send({ embeds: [banembed] });
-    esport.send({ embeds: [banembed] });
+  kpclog.send({ embeds: [banembed] });
+  ncklog.send({ embeds: [banembed] });
+  ckalog.send({ embeds: [banembed] });
+  esport.send({ embeds: [banembed] });
 
-    const doneembed = new EmbedBuilder()
+
+
+
+  const currentchanneldoneemebed = new EmbedBuilder()
     .setTitle('Successfully done!')
     .setDescription(`**${player.user.tag}** has been esport banned for **${prettytime}**.\n\nReason: **${reason}**`)
     .setColor("Green")
     .setTimestamp();
 
-    msg.channel.send({ embeds: [doneembed] })
+  msg.channel.send({ embeds: [currentchanneldoneemebed] })
 
 }
