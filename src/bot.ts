@@ -75,7 +75,6 @@ async function thesubscriber() {
     const unbanneduser = client.users.fetch(unbannedid)
 
     const serverarray = [
-      // '1086657051113029702', //extra
       '672146248182136863', //kpc
       '996161328546861126', //nack
       '832245400505155595', //cka
@@ -164,7 +163,7 @@ client.on('messageCreate', (msg) => {
     case 'alltourneysweirtuewhrtoiqurweh':
       AllTourneys(msg, args, client)
       break;
-    case 'compban':
+    case 'compoer':
       CompBan(msg, args, client)
       break;
     case 'compunban':

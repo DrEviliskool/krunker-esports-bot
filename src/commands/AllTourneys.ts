@@ -68,14 +68,8 @@ export const AllTourneys = async (msg: Message, args: String[], client: Client) 
         });
     }
 
-
-    setTimeout(() => {
-        new Pagination()
-            .setCommand(msg)
-            .setPages(allembeds)
-            .setButtons(buttonarray)
-            .send()
-    }, 1000 * 3);
+    
+    
 
 
 

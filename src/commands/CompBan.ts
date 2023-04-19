@@ -22,7 +22,6 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   ] // ONLY PEOPLE WITH ACCESS
 
   const serverarray = [
-    // '1086657051113029702', //extra
     '672146248182136863', //kpc
     '996161328546861126', //nack
     '832245400505155595', //cka
@@ -42,48 +41,42 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
 
 
-  const player = client.users.fetch(args[0])
+  const player = await client.users.fetch(args[0])
   if (!player || !args[0]) return msg.channel.send('Example usage: ?ban **123456789** 90d Account sharing')
 
 
-  const time = ms(args[1])
+  let time:any = args[1]
+  if (time == "perm" || time == "perma" || time == "permanent" || time == "forever" || time == "infinity" || time == "infinite") {
+    time = -1
+  } else {
+    time = ms(args[1])
+  }
+  
   if (!time) return msg.channel.send('Example usage: ?ban 123456789 **90d** Account sharing')
   const prettytime = humanizeDuration(time, { largest: 2 })
   
-
-
   
   const reason = args.slice(2).join(" ")
   if (!reason) return msg.channel.send('Example usage: ?ban 123456789 90d **Account sharing**')
 
-
-
-
   if (!player || !time || !reason) return msg.channel.send('Example usage: ?ban 123456789 90d Account sharing')
 
   const seconds = time / 1000
-
-  const rediskey = `banned-${(await player).id}`
-
-
-
+  const rediskey = `banned-${player.id}}`
 
   if (seconds > 0) {
 
-    redisClient.set(rediskey, reason, { EX: seconds }).catch(ok => {
+    redisClient.set(rediskey, reason + `Discord Tag: ${player.tag}`, { EX: seconds }).catch(ok => {
       console.log('Err line 68 ', ok)
     })
 
 
   } else {
 
-    redisClient.set(rediskey, reason, { EX: seconds }).catch(ok => {
+    redisClient.set(rediskey, reason + `Discord Tag: ${player.tag}`).catch(ok => {
       console.log('Err line 75 ', ok)
     })
   }
-
-
-
   
   const dmembed = new EmbedBuilder()
     .setDescription(`Hello ${(await player).username}, you have been esport banned for **${prettytime}**.\n\nReason: ${reason}`)
@@ -103,22 +96,6 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     })
 
   })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   const banembed = new EmbedBuilder()
     .setTitle('New Esport Ban!')
