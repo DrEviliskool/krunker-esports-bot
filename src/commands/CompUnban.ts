@@ -1,5 +1,5 @@
 import { Client, EmbedBuilder, Message, TextChannel, embedLength } from "discord.js";
-import { redisClient } from "/Users/drevi/Downloads/krunker-esports-bot/src/bot";
+import { redisClient } from "../bot";
 
 
 export const CompUnban = async (msg: Message, args: string[], client: Client) => {
@@ -40,7 +40,7 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     ]
     const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
     const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
-    const ckalog = client.channels.cache.get('832517548355747840') as TextChannel
+    const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
     const esport = client.channels.cache.get('1097169881222365257') as TextChannel
     const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
