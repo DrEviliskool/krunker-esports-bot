@@ -21,4 +21,4 @@ export const serverarray = [
     '996161328546861126', //nack
     '832245400505155595', //cka
     '623849289403334656' //krunker esports server
-  ]
+]
