@@ -62,7 +62,7 @@ async function thesubscriber() {
   const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
   const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
   const esport = client.channels.cache.get('1097169881222365257') as TextChannel
-  const admins = client.channels.cache.get('1060536650918281296') as TextChannel
+  // const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
 
 
@@ -99,7 +99,7 @@ async function thesubscriber() {
         { name: `NACK (NA)`, value: `[Click here!](https://discord.gg/nJmqWam3tj)` },
         { name: `Competitive Krunker APAC (SEA/OCE)`, value: `[Click here!](https://discord.gg/bRs2PVzZza)` },
       )
-      .setColor("Green")
+      .setColor("Red")
       .setTimestamp();
 
     ; (await unbanneduser).send({ embeds: [dmunbanembed] }).catch(async err => {
@@ -109,14 +109,14 @@ async function thesubscriber() {
     const unbanembed = new EmbedBuilder()
       .setAuthor({ name: `${(await unbanneduser).tag} (${(await unbanneduser).id})` })
       .setTitle('Was unbanned automatically, time expired.')
-      .setColor("Green")
+      .setColor("Red")
       .setTimestamp();
     
     kpclog.send({ embeds: [unbanembed] });
     ncklog.send({ embeds: [unbanembed] });
     ckalog.send({ embeds: [unbanembed] });
     esport.send({ embeds: [unbanembed] });
-    admins.send({ embeds: [unbanembed] });
+    // admins.send({ embeds: [unbanembed] });
 
       console.log(`EXPIRED UNBAN: ${(await unbanneduser).tag} (${unbannedid})`)
   });

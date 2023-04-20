@@ -63,7 +63,7 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
       { name: `NACK (NA)`, value: `[Click here!](https://discord.gg/nJmqWam3tj)` },
       { name: `Competitive Krunker APAC (ASIA)`, value: `[Click here!](https://discord.gg/bRs2PVzZza)` },
     )
-    .setColor("Green")
+    .setColor("Red")
     .setTimestamp();
 
     (await player).send({ embeds: [dmembed] })
@@ -85,7 +85,7 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     const doneembed = new EmbedBuilder()
     .setTitle('Successfully done!')
     .setDescription(`**${(await player).tag}**'s esport ban has been removed!`)
-    .setColor("Green")
+    .setColor("Red")
     .setTimestamp();
 
     msg.channel.send({ embeds: [doneembed] })

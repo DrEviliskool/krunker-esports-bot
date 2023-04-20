@@ -57,7 +57,7 @@ export const AllTourneys = async (msg: Message, args: String[], client: Client) 
                         { name: 'Ended?', value: `${tourney.ended}` },
                         { name: 'Brackets Link:', value: `${tourney.bracketLink}` },
                     )
-                    .setColor("Green")
+                    .setColor("Red")
                     .setFooter({ text: `Host: ${tourney.hostName}` })
                     .setTimestamp()
             )
