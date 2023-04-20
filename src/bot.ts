@@ -11,6 +11,7 @@ import {
   CompUnban,
 
 } from './commands/Commands';
+import { OWNERS, serverarray } from './config';
 
 dotenv.config();
 
@@ -62,7 +63,7 @@ async function thesubscriber() {
   const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
   const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
   const esport = client.channels.cache.get('1097169881222365257') as TextChannel
-  // const admins = client.channels.cache.get('1060536650918281296') as TextChannel
+  const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
 
 
@@ -73,13 +74,6 @@ async function thesubscriber() {
   await subscriber.subscribe('__keyevent@0__:expired', async (message) => {
     const unbannedid = message.replace("banned-", "")
     const unbanneduser = client.users.fetch(unbannedid)
-
-    const serverarray = [
-      '672146248182136863', //kpc
-      '996161328546861126', //nack
-      '832245400505155595', //cka
-      '623849289403334656' //krunker esports server
-    ]
 
     serverarray.forEach(server => {
       client.guilds.fetch(server).then(async (guild) => {
@@ -116,7 +110,7 @@ async function thesubscriber() {
     ncklog.send({ embeds: [unbanembed] });
     ckalog.send({ embeds: [unbanembed] });
     esport.send({ embeds: [unbanembed] });
-    // admins.send({ embeds: [unbanembed] });
+    admins.send({ embeds: [unbanembed] });
 
       console.log(`EXPIRED UNBAN: ${(await unbanneduser).tag} (${unbannedid})`)
   });
@@ -163,7 +157,7 @@ client.on('messageCreate', (msg) => {
     case 'alltourneys':
       AllTourneys(msg, args, client)
       break;
-    case 'compban':
+    case 'compbannn':
       CompBan(msg, args, client)
       break;
     case 'compunban':
