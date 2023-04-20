@@ -1,11 +1,11 @@
 import { Client, EmbedBuilder, Guild, GuildMember, Message, TextChannel, User } from "discord.js";
 import ms from "ms";
-import humanizeDuration from "humanize-duration"
+import { HumanizeDurationLanguage, HumanizeDuration } from 'humanize-duration-ts';
 import { redisClient } from "../bot";
-import { OWNERS, serverarray } from "src/config";
-export const CompBan = async (msg: Message, args: string[], client: Client) => {  
-
+import { OWNERS, serverarray } from "../config";
+export const CompBan = async (msg: Message, args: string[], client: Client) => {
   
+  const service = new HumanizeDuration(new HumanizeDurationLanguage())
 
   const kpclog = client.channels.cache.get('801552076726730752') as TextChannel 
   const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
@@ -76,7 +76,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     msg.channel.send({ embeds: [currentchanneldoneemebed] })
     return
   }
-  const prettytime = humanizeDuration(time, { largest: 2 })
+  const prettytime = service.humanize(time)
   
 
 
