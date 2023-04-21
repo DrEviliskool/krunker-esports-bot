@@ -33,16 +33,19 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     .setTimestamp()
 
     player.send({embeds: [dmembed]})
-    serverarray.forEach(server => {
-      client.guilds.fetch(server).then(async guild => {
-        guild.bans.create(player, { reason: reason }).catch(async (err) => {
-          console.log(`Couldnt ban ${player.tag} in ${guild.name}`)
 
+    setTimeout(async () => {
+
+      serverarray.forEach(async (server) => {
+        await client.guilds.fetch(server).then(async (guild) => {
+          await guild.bans.create(player, { reason: reason }).catch(err => {
+            console.log(`Couldnt ban ${player.tag} in ${guild.name}\nERROR:\n\n\n${err}`)
+  
+          })
         })
       })
-    })
-
-
+      
+    }, 1000 * 2);
 
 
     const banembed = new EmbedBuilder()
