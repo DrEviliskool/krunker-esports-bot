@@ -81,7 +81,7 @@ export const EndTourney = async (msg: Message, args: string[], client: Client) =
                                         { name: '2nd Place 🥈:', value: `${secondteam}` },
                                         { name: '3rd Place 🥉:', value: `${thirdteam}` },
                                     )
-                                    .setColor("Red")
+                                    .setColor("#ffdc3a")
                                     .setTimestamp();
 
                                     msg.channel.send({ embeds: [embed] });

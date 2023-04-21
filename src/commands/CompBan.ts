@@ -29,7 +29,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     const reason = args.slice(1).join(" ")
     const dmembed = new EmbedBuilder()
     .setDescription(`Hello ${player.username}, you have been **permanently** esport banned.\n\nReason: ${reason}`)
-    .setColor("Green")
+    .setColor("#ffdc3a")
     .setTimestamp()
 
     player.send({embeds: [dmembed]})
@@ -70,16 +70,13 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     const currentchanneldoneemebed = new EmbedBuilder()
       .setTitle('Successfully done!')
       .setDescription(`**${player.tag}** has been **permanently** esport banned.\n\nReason: **${reason}**`)
-      .setColor("Green")
+      .setColor("#ffdc3a")
       .setTimestamp();
 
     msg.channel.send({ embeds: [currentchanneldoneemebed] })
     return
   }
-  const prettytime = service.humanize(time)
-  
-
-
+  const prettytime = service.humanize(time, { largest: 2} )
   
   const reason = args.slice(2).join(" ")
   if (!reason) return msg.channel.send('Example usage: ?compban 123456789 90d **Account sharing**')
@@ -93,9 +90,6 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
   const rediskey = `banned-${player.id}`
 
-
-
-
   if (seconds > 0) {
 
     redisClient.set(rediskey, reason, { EX: seconds }).catch(ok => {
@@ -103,19 +97,11 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     })
 
 
-  } else {
-
-    redisClient.set(rediskey, reason, { EX: seconds }).catch(ok => {
-      console.log('Err line 75 ', ok)
-    })
   }
-
-
-
-  
+ 
   const dmembed = new EmbedBuilder()
     .setDescription(`Hello ${player.username}, you have been esport banned for **${prettytime}**.\n\nReason: ${reason}`)
-    .setColor("Green")
+    .setColor("#ffdc3a")
     .setTimestamp()
 
   player.send({ embeds: [dmembed] })
@@ -148,13 +134,10 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   esport.send({ embeds: [banembed] });
   admins.send({ embeds: [banembed] })
 
-
-
-
   const currentchanneldoneemebed = new EmbedBuilder()
     .setTitle('Successfully done!')
     .setDescription(`**${player.tag}** has been esport banned for **${prettytime}**.\n\nReason: **${reason}**`)
-    .setColor("Green")
+    .setColor("#ffdc3a")
     .setTimestamp();
 
   msg.channel.send({ embeds: [currentchanneldoneemebed] })

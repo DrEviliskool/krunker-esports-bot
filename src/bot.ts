@@ -1,4 +1,4 @@
-import { ActivityType, Client, Embed, EmbedBuilder, GatewayIntentBits, Message, TextChannel } from 'discord.js'
+import { ActivityType, ButtonBuilder, ButtonStyle, Client, Embed, EmbedBuilder, GatewayIntentBits, Interaction, Message, TextChannel } from 'discord.js'
 import dotenv from 'dotenv';
 import * as redis from "redis"
 import {
@@ -93,7 +93,7 @@ async function thesubscriber() {
         { name: `NACK (NA)`, value: `[Click here!](https://discord.gg/nJmqWam3tj)` },
         { name: `Competitive Krunker APAC (SEA/OCE)`, value: `[Click here!](https://discord.gg/bRs2PVzZza)` },
       )
-      .setColor("Red")
+      .setColor("#ffdc3a")
       .setTimestamp();
 
     ; (await unbanneduser).send({ embeds: [dmunbanembed] }).catch(async err => {
@@ -103,7 +103,7 @@ async function thesubscriber() {
     const unbanembed = new EmbedBuilder()
       .setAuthor({ name: `${(await unbanneduser).tag} (${(await unbanneduser).id})` })
       .setTitle('Was unbanned automatically, time expired.')
-      .setColor("Red")
+      .setColor("#ffdc3a")
       .setTimestamp();
     
     kpclog.send({ embeds: [unbanembed] });
@@ -141,6 +141,9 @@ client.on('messageCreate', (msg) => {
   const args = msg.content.slice(prefix.length).trim().split(/ +/);
   const command = args.shift()?.toLowerCase()
 
+  let interaction
+
+
   switch (command) {
     case 'delcat':
       DelCategory(msg, args, client)
@@ -155,9 +158,9 @@ client.on('messageCreate', (msg) => {
       NewTeamAll(msg, args, client)
       break;
     case 'alltourneys':
-      AllTourneys(msg, args, client)
+      AllTourneys(msg, args, client, interaction)
       break;
-    case 'compbannn':
+    case 'compban':
       CompBan(msg, args, client)
       break;
     case 'compunban':

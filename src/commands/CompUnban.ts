@@ -8,14 +8,10 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     if (!OWNERS.some(ID => msg.author?.id.includes(ID))) {
         return
     }
-
-
+    
     const player = client.users.fetch(args[0])
-
     if (!player) return msg.channel.send('Example usage: ?compunban 123456789')
 
-
-    
     const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
     const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
     const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
@@ -29,8 +25,7 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
 
         })
 
-    })
-    
+    })    
 
     const dmembed = new EmbedBuilder()
     .setTitle('You have been esport unbanned!')
@@ -41,7 +36,7 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
       { name: `NACK (NA)`, value: `[Click here!](https://discord.gg/nJmqWam3tj)` },
       { name: `Competitive Krunker APAC (ASIA)`, value: `[Click here!](https://discord.gg/bRs2PVzZza)` },
     )
-    .setColor("Red")
+    .setColor("#ffdc3a")
     .setTimestamp();
 
     (await player).send({ embeds: [dmembed] })
@@ -63,7 +58,7 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     const doneembed = new EmbedBuilder()
     .setTitle('Successfully done!')
     .setDescription(`**${(await player).tag}**'s esport ban has been removed!`)
-    .setColor("Red")
+    .setColor("#ffdc3a")
     .setTimestamp();
 
     msg.channel.send({ embeds: [doneembed] })

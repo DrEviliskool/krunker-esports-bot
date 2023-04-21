@@ -16,9 +16,9 @@
   "author": "DrEvil",
   "license": "ISC",
   "dependencies": {
+    "@devraelfreeze/discordjs-pagination": "^2.7.4",
     "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.14.0",
-    "customizable-discordjs-pagination": "^2.0.2",
     "date-fns": "^2.29.3",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
