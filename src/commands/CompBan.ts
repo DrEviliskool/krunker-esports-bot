@@ -32,7 +32,9 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     .setColor("#ffdc3a")
     .setTimestamp()
 
-    player.send({embeds: [dmembed]})
+    player.send({embeds: [dmembed]}).catch(err => {
+      console.log(`Couldn't dm ${player.tag}`)
+    })
 
     setTimeout(async () => {
 
@@ -107,7 +109,9 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     .setColor("#ffdc3a")
     .setTimestamp()
 
-  player.send({ embeds: [dmembed] })
+  player.send({ embeds: [dmembed] }).catch(err => {
+    console.log(`Couldn't dm ${player.tag}`)
+  })
     
   serverarray.forEach(server => {
     client.guilds.fetch(server).then(async guild => {
