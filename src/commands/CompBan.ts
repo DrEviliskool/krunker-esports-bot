@@ -1,10 +1,10 @@
 import { Client, EmbedBuilder, Guild, GuildMember, Message, TextChannel, User } from "discord.js";
-import ms from "ms";
 import { HumanizeDurationLanguage, HumanizeDuration } from 'humanize-duration-ts';
 import { redisClient } from "../bot";
 import { OWNERS, serverarray } from "../config";
+import { leparser } from "../func/index";
 export const CompBan = async (msg: Message, args: string[], client: Client) => {
-  
+  ('1month')
   const service = new HumanizeDuration(new HumanizeDurationLanguage())
 
   const kpclog = client.channels.cache.get('801552076726730752') as TextChannel 
@@ -23,7 +23,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   const player = await client.users.fetch(args[0])
   if (!player || !args[0] || !args[1]) return msg.channel.send('Example usage: ?compban **123456789** 90d Account sharing or ?compban **123456789** test (perm)')
 
-  const time = ms(args[1])
+  const time = leparser(args[1])
   if (!time && !args[2]) {
 
     const reason = args.slice(1).join(" ")
@@ -81,7 +81,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     msg.channel.send({ embeds: [currentchanneldoneemebed] })
     return
   }
-  const prettytime = service.humanize(time, { largest: 2 } )
+  const prettytime = service.humanize(time!, { largest: 2 } )
   
   const reason = args.slice(2).join(" ")
   if (!reason) return msg.channel.send('Example usage: ?compban 123456789 90d **Account sharing**')
