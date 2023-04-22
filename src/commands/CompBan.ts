@@ -4,7 +4,7 @@ import { redisClient } from "../bot";
 import { OWNERS, serverarray } from "../config";
 import { leparser } from "../func/index";
 export const CompBan = async (msg: Message, args: string[], client: Client) => {
-  ('1month')
+  
   const service = new HumanizeDuration(new HumanizeDurationLanguage())
 
   const kpclog = client.channels.cache.get('801552076726730752') as TextChannel 
