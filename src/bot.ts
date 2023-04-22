@@ -9,6 +9,7 @@ import {
   AllTourneys,
   CompBan,
   CompUnban,
+  delmsg,
 
 } from './commands/Commands';
 import { OWNERS, serverarray } from './config';
@@ -160,12 +161,15 @@ client.on('messageCreate', (msg) => {
     case 'alltourneys':
       AllTourneys(msg, args, client, interaction)
       break;
-    case 'compbann':
+    case 'compbnn':
       CompBan(msg, args, client)
       break;
-    case 'compunbann':
+    case 'compunban':
       CompUnban(msg, args, client)
       break;
+    case 'delmsg':
+      delmsg(msg, args, client)
+    break;  
 
   }
 })

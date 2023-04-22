@@ -5,6 +5,7 @@ import { DelCategory } from "./DelCategory"
 import { EndTourney } from "./EndTourney"
 import { GiveThemAll } from "./GiveThemAll"
 import { NewTeamAll } from "./NewTeamAll"
+import { delmsg } from "./delmsg"
 
 export {
   NewTeamAll,
@@ -14,5 +15,5 @@ export {
   AllTourneys,
   CompBan,
   CompUnban,
-
+  delmsg,
 }
