@@ -79,7 +79,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     msg.channel.send({ embeds: [currentchanneldoneemebed] })
     return
   }
-  const prettytime = service.humanize(time, { largest: 2} )
+  const prettytime = service.humanize(time, { largest: 2 } )
   
   const reason = args.slice(2).join(" ")
   if (!reason) return msg.channel.send('Example usage: ?compban 123456789 90d **Account sharing**')
