@@ -1,4 +1,4 @@
-import { Client, EmbedBuilder, Guild, GuildMember, Message, TextChannel, User } from "discord.js";
+import { Client, EmbedBuilder, Message, TextChannel, User } from "discord.js";
 import { HumanizeDurationLanguage, HumanizeDuration } from 'humanize-duration-ts';
 import { redisClient } from "../bot";
 import { OWNERS, serverarray } from "../config";
