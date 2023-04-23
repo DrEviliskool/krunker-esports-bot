@@ -161,7 +161,7 @@ client.on('messageCreate', (msg) => {
     case 'alltourneys':
       AllTourneys(msg, args, client, interaction)
       break;
-    case 'compbnn':
+    case 'compban':
       CompBan(msg, args, client)
       break;
     case 'compunban':

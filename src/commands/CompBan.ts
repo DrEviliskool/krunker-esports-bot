@@ -25,7 +25,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   if (!player || !args[0] || !args[1]) return msg.channel.send('Example usage: ?compban **123456789** 90d Account sharing or ?compban **123456789** test (perm)')
 
   const time = leparser(args[1])
-  if (!time && args[2]) {
+  if (!time && args[1]) {
 
     const reason = args.slice(1).join(" ")
     const dmembed = new EmbedBuilder()
