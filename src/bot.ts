@@ -66,8 +66,6 @@ async function thesubscriber() {
   const esport = client.channels.cache.get('1097169881222365257') as TextChannel
   const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
-
-
   redisClient.sendCommand(['CONFIG', 'SET', 'notify-keyspace-events', 'xE'])
   const subscriber = redisClient.duplicate()
   await subscriber.connect()
@@ -119,6 +117,7 @@ async function thesubscriber() {
 
 client.on('ready', () => {
 
+  
   thesubscriber()
 
 
