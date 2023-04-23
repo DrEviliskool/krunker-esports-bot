@@ -14,6 +14,7 @@ export const OWNERS = [
     "259526415341322250", //tjwyk
     "154052900425826304", //Wingman
     "216374871494623232", //IRRASHINAL
+    "282873860884398080", //N0N
 ] // ONLY PEOPLE WITH ACCESS
 
 export const serverarray = [
