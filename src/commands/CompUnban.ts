@@ -9,8 +9,17 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
         return
     }
     
-    const player = client.users.fetch(args[0])
-    if (!player) return msg.channel.send('Example usage: ?compunban 123456789')
+
+    let theplayerid = parseInt(args[0]) as any
+
+    if (!isNaN(theplayerid)) { 
+      return msg.channel.send('Example usage: ?compban **123456789** account sharing')
+    }
+  
+  
+    const player = await client.users.fetch(theplayerid!)
+    if (!player || !args[0]) return msg.channel.send('Example usage: ?compunban 123456789')
+
 
     const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
     const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
@@ -21,25 +30,13 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     serverarray.forEach(server => {
         client.guilds.fetch(server).then(async (guild) => {
 
-            guild.bans.remove((await player))
+            guild.bans.remove(player).catch(async (e) => {
+                return msg.channel.send(`Couldn't unban ${player.id}. Error:\n\n${e}`)
+            })
 
         })
 
-    })    
-
-    const dmembed = new EmbedBuilder()
-    .setTitle('You have been esport unbanned!')
-    .setDescription('Here are all the server links:')
-    .addFields(
-      { name: `Krunker Esports:`, value: `[Click here!](https://discord.gg/9r6SeMQC3s)` },
-      { name: `Krunker Pro Ciruit (EU)`, value: `[Click here!](https://discord.gg/YPjBn5C)` },
-      { name: `NACK (NA)`, value: `[Click here!](https://discord.gg/nJmqWam3tj)` },
-      { name: `Competitive Krunker APAC (ASIA)`, value: `[Click here!](https://discord.gg/bRs2PVzZza)` },
-    )
-    .setColor("#ffdc3a")
-    .setTimestamp();
-
-    (await player).send({ embeds: [dmembed] })
+    })
 
     const unbanembed = new EmbedBuilder()
     .setTitle('New Esport UnBan!')
