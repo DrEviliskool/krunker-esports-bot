@@ -148,13 +148,13 @@ client.on('messageCreate', (msg) => {
     case 'delcat':
       DelCategory(msg, args, client)
       break;
-    case 'okxdlol':
+    case 'endtourney':
       EndTourney(msg, args, client)
       break;
     case 'givethemall':
       GiveThemAll(msg, args, client)
       break;
-    case 'heylolxd':
+    case 'newteamall':
       NewTeamAll(msg, args, client)
       break;
     case 'alltourneys':
