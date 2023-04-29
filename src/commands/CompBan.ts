@@ -23,7 +23,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
   let theplayerid = parseInt(args[0]) as any
 
-  if (!parseInt(theplayerid) || !theplayerid ) return msg.channel.send('Example usage: ?compban **123456789** account sharing')
+  if (!theplayerid ) return msg.channel.send('Example usage: ?compban **123456789** account sharing')
 
   const player = await client.users.fetch(theplayerid)
 
