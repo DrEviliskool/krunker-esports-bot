@@ -1,4 +1,4 @@
-import { EmbedBuilder, Message, Client, Role } from "discord.js";
+import { EmbedBuilder, Message, Client, Role, GuildMember } from "discord.js";
 import { OWNERS } from "../config";
 import { XMLHttpRequest } from "xhr2"
 
@@ -7,7 +7,7 @@ import { XMLHttpRequest } from "xhr2"
 export const GiveThemAll = async (msg: Message, args: string[], client: Client, ) => {
 
     if (!OWNERS.some(ID => msg.author?.id.includes(ID))) {
-        return console.log('hi')
+        return
     }
     
 
@@ -48,9 +48,60 @@ export const GiveThemAll = async (msg: Message, args: string[], client: Client, 
 
                             tournament.teams.forEach(async (team) => {
                                 const teamname = team.teamName.trim()
-                                const captainrole = await msg.guild.roles.cache.find(role => role.id === captainroleid)
-                                const partirole = await msg.guild.roles.cache.find(role => role.id === validatedroleid)
-                                const customrole = await msg.guild.roles.cache.find(role => role.name === teamname)
+
+                                //roles
+                                const captainrole = await msg.guild.roles.cache.find(role => role.id === captainroleid) as Role;
+                                const partirole = await msg.guild.roles.cache.find(role => role.id === validatedroleid) as Role;
+                                const customrole = await msg.guild.roles.cache.find(role => role.name === teamname)     as Role;
+
+                                //player tags
+                                const playeronediscordtag = team.players[0].discordName.replace(" ", "").trim(); 
+                                const playertwodiscordtag = team.players[1].discordName.replace(" ", "").trim();
+                                const playerthrdiscordtag = team.players[2].discordName.replace(" ", "").trim();
+                                const playerfordiscordtag = team.players[3].discordName.replace(" ", "").trim();
+
+                                
+
+
+                                //players in code
+                                const playeronet = await msg.guild.members.cache.find(member => member.user.tag === playeronediscordtag) as GuildMember;
+                                const playertwot = await msg.guild.members.cache.find(member => member.user.tag === playertwodiscordtag) as GuildMember;
+                                const playerthrt = await msg.guild.members.cache.find(member => member.user.tag === playerthrdiscordtag) as GuildMember;
+                                const playerfort = await msg.guild.members.cache.find(member => member.user.tag === playerfordiscordtag) as GuildMember;
+
+                                //team captain
+                                let captain = team.captain
+                                if (captain == "P1") {
+
+                                    captain = playeronet
+                                    captain.roles.add(captainrole)
+                                    captain.roles.add(partirole)
+                                    captain.roles.add(customrole)
+
+
+                                } else if (captain == "P2") {
+
+                                    captain = playertwot
+                                    captain.roles.add(captainrole)
+                                    captain.roles.add(partirole)
+                                    captain.roles.add(customrole)
+
+                                    
+                                } else if (captain == "P3") {
+                                    
+                                    captain = playerthrt
+                                    captain.roles.add(captainrole)
+                                    captain.roles.add(partirole)
+                                    captain.roles.add(customrole)
+
+                                } else if (captain == "P4") {
+                                    
+                                    captain = playerfort
+                                    captain.roles.add(captainrole)
+                                    captain.roles.add(partirole)
+                                    captain.roles.add(customrole)
+
+                                }
     
                                 if (team.Sub == null) {
                                     team.Sub = "No sub"
@@ -62,28 +113,17 @@ export const GiveThemAll = async (msg: Message, args: string[], client: Client, 
                                     subt.roles.add(partirole)
                                     
                                 }
-    
+                                
     
                                 if (tournament.type == "2v2") {
-    
-    
-                                    const playeronediscordtag = team.players[0].discordName.replace(" ", "").trim(); 
-                                    const playertwodiscordtag = team.players[1].discordName.trim();
-                                    
-                                    const playeronet = await msg.guild.members.cache.find(member => member.user.tag === playeronediscordtag)
-                                    const playertwot = await msg.guild.members.cache.find(member => member.user.tag === playertwodiscordtag)
-    
-    
+
                                     //player 1
-    
                                     setTimeout(async () => {
-                                        
-                                        await playeronet.roles.add(captainrole)
                                         await playeronet.roles.add(partirole)
                                         await playeronet.roles.add(customrole)
     
                                     }, 1000 * 1);
-    
+
                                     //player 2
                                     setTimeout(async () => {
                                         
@@ -92,21 +132,9 @@ export const GiveThemAll = async (msg: Message, args: string[], client: Client, 
     
                                     }, 1000 * 1)
     
-    
-    
                                 } else if (tournament.type == "3v3") {
-    
-                                    const playeronediscordtag = team.players[0].discordName.trim(); 
-                                    const playertwodiscordtag = team.players[1].discordName.trim();
-                                    const playerthrdiscordtag = team.players[2].discordName.trim();
-                                    
-                                    const playeronet = await msg.guild.members.cache.find(member => member.user.tag === playeronediscordtag)
-                                    const playertwot = await msg.guild.members.cache.find(member => member.user.tag === playertwodiscordtag)
-                                    const playerthrt = await msg.guild.members.cache.find(member => member.user.tag === playerthrdiscordtag)
-    
-    
+
                                     //player 1
-    
                                     setTimeout(async () => {
                                         
                                         await playeronet.roles.add(captainrole)
@@ -130,23 +158,9 @@ export const GiveThemAll = async (msg: Message, args: string[], client: Client, 
                                         await playerthrt.roles.add(customrole)
     
                                     }, 1000 * 1);
-                                    
-                                    
-    
-                                    
+  
                                 } else if (tournament.type == "4v4") {
-    
-                                    const playeronediscordtag = team.players[0].discordName.trim(); 
-                                    const playertwodiscordtag = team.players[1].discordName.trim();
-                                    const playerthrdiscordtag = team.players[2].discordName.trim();
-                                    const playerfordiscordtag = team.players[3].discordName.trim();
-                                    
-                                    const playeronet = await msg.guild.members.cache.find(member => member.user.tag === playeronediscordtag)
-                                    const playertwot = await msg.guild.members.cache.find(member => member.user.tag === playertwodiscordtag)
-                                    const playerthrt = await msg.guild.members.cache.find(member => member.user.tag === playerthrdiscordtag)
-                                    const playerfort = await msg.guild.members.cache.find(member => member.user.tag === playerfordiscordtag)
-    
-    
+
                                     //player 1
     
                                     setTimeout(async () => {
@@ -185,7 +199,7 @@ export const GiveThemAll = async (msg: Message, args: string[], client: Client, 
     
                             })
     
-                                await msg.channel.send('Attempting to give the roles to all members playing in the tournament ... Please wait')
+                                await msg.channel.send(`Attempting to give the roles to all members playing in the tournament **${tournament.name}** ... Please wait'`)
                               
                             
                         } catch (e) {
