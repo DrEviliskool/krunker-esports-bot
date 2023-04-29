@@ -1,6 +1,8 @@
-import { ActivityType, ButtonBuilder, ButtonStyle, Client, Embed, EmbedBuilder, GatewayIntentBits, Interaction, Message, TextChannel } from 'discord.js'
+import { ActivityType, ButtonBuilder, ButtonStyle, CategoryChannel, ChannelType, Client, Embed, EmbedBuilder, GatewayIntentBits, Interaction, Message, PermissionsBitField, Role, TextChannel } from 'discord.js'
 import dotenv from 'dotenv';
 import * as redis from "redis"
+import { XMLHttpRequest } from "xhr2"
+
 import {
   NewTeamAll,
   GiveThemAll,
@@ -171,8 +173,8 @@ client.on('messageCreate', (msg) => {
       break;
     case 'delmsg':
       delmsg(msg, args, client)
-    break;  
-
+    break;
+    
   }
 })
 

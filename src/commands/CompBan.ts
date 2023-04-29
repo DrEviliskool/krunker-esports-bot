@@ -23,11 +23,11 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
   let theplayerid = parseInt(args[0]) as any
 
-  if (!isNaN(theplayerid) || !theplayerid ) return msg.channel.send('Example usage: ?compban **123456789** account sharing')
+  if (!Number(theplayerid) || !theplayerid ) return msg.channel.send('Example usage: ?compban **123456789** account sharing')
 
-  const player = await client.users.fetch(theplayerid!)
+  const player = await client.users.fetch(theplayerid)
 
-  if (!player || !args[0] || !args[1]) return msg.channel.send('Example usage: ?compban 123456789 90d Account sharing or ?compban 123456789 test (perm)')
+  if (!player || !args[1]) return msg.channel.send('Example usage: ?compban 123456789 90d Account sharing or ?compban 123456789 test (perm)')
 
   const time = leparser(args[1])
   if (!time && args[1]) {

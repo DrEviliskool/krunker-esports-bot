@@ -1,4 +1,4 @@
-import { ChannelType, PermissionsBitField, EmbedBuilder, Message, Client, Role } from "discord.js";
+import { ChannelType, PermissionsBitField, Message, Client, Role, CategoryChannel } from "discord.js";
 import { OWNERS } from "../config";
 import { XMLHttpRequest } from "xhr2"
 
@@ -54,10 +54,10 @@ export const NewTeamAll = async (msg: Message, args: string[], client: Client) =
 
         msg.channel.send('Tourney helper role id?').then(msg => {
             msg.channel.awaitMessages({ filter: filter, max: 1, time: 25000, errors: ["time"] }).then(async (messages) => {
-                const tourneyhelperrole = msg.guild.roles.cache.find(role => role.id === messages.first().content)
+                const tourneyhelperrole = msg.guild.roles.cache.find(role => role.id === messages.first().content) as Role
                 msg.channel.send('Caster role id?').then(msg => {
                     msg.channel.awaitMessages({ filter: filter, max: 1, time: 25000, errors: ["time"] }).then(async (messages) => {
-                        const casterrole = msg.guild.roles.cache.find(role => role.id === messages.first().content)
+                        const casterrole = msg.guild.roles.cache.find(role => role.id === messages.first().content) as Role
 
 
                         if (!tourneyhelperrole || !casterrole) {
@@ -69,7 +69,7 @@ export const NewTeamAll = async (msg: Message, args: string[], client: Client) =
 
                                 const teamname = team.teamName.trim()
 
-                                const category = msg.guild.channels.cache.find(ch => ch.type === ChannelType.GuildCategory && ch.name === teamname)
+                                const category = msg.guild.channels.cache.find(ch => ch.type === ChannelType.GuildCategory && ch.name === teamname) as CategoryChannel
                                 if (team.validated == false) return msg.channel.send("```diff\n- The team " + teamname + " is not validated!```")
 
 
@@ -127,6 +127,36 @@ export const NewTeamAll = async (msg: Message, args: string[], client: Client) =
                                             })
                                         })
                                         await msg.guild.channels.create({ name: 'vc', type: ChannelType.GuildVoice, parent: CategoryChannel, })
+
+                                        await msg.guild?.channels.create({ name: 'private', type: ChannelType.GuildVoice, parent: category, permissionOverwrites: 
+                                        [
+                                            {
+                                                
+                                                id: casterrole.id, 
+                                                allow: customrolepermissions 
+                                            },
+
+                                            {
+                                                id: tourneyhelperrole.id, 
+                                                allow: customrolepermissions 
+                                            },
+                                
+                                            {
+                                                id: customrole.id,
+                                                allow: [PermissionsBitField.Flags.Stream, PermissionsBitField.Flags.Speak],
+                                                deny: PermissionsBitField.Flags.ViewChannel
+                                            },
+                                
+                                            {
+                                                id: everyonerole.id,
+                                                deny: PermissionsBitField.Flags.ViewChannel
+                                
+                                            },
+                                
+                                              
+                                          ],
+                                        
+                                        })
                                     })
 
                                     msg.channel.send("```diff\n+ The team " + teamname + " is has been created!```")
