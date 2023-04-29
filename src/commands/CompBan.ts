@@ -103,7 +103,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
   if (seconds > 0) {
 
-    redisClient.set(rediskey, reason, { EX: seconds }).catch(ok => {
+    redisClient.set(rediskey, `Discord Tag: ${player.tag} ------- Ban Reason: ${reason}`, { EX: seconds }).catch(ok => {
       console.log('Err line 68 ', ok)
     })
 

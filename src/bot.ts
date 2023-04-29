@@ -60,6 +60,7 @@ redisClient.connect().then(ok => {
 let msg: Message
 async function thesubscriber() {
 
+
   const kpclog = client.channels.cache.get('1091733571397488660') as TextChannel
   const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
   const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
@@ -69,6 +70,8 @@ async function thesubscriber() {
   redisClient.sendCommand(['CONFIG', 'SET', 'notify-keyspace-events', 'xE'])
   const subscriber = redisClient.duplicate()
   await subscriber.connect()
+
+
 
   await subscriber.subscribe('__keyevent@0__:expired', async (message) => {
     const unbannedid = message.replace("banned-", "")
