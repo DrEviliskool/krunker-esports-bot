@@ -4,65 +4,69 @@ import { XMLHttpRequest } from "xhr2"
 
 export const AllTourneys = async (msg: Message, args: String[], client: Client, interaction: Interaction) => {
 
-    // loadJSON method to open the JSON file.
-    function loadJSON(path, success, error) {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    success(JSON.parse(xhr.responseText));
-                }
-                else {
-                    console.log('Error! ' + xhr);
-                }
-            }
-        };
-        xhr.open('GET', path, true);
-        xhr.send();
-    }
+    let orgname = args.join(" ").toLowerCase()
 
-    let orgname = args[0]
+    // if (!orgname) return msg.channel.send('Usage example: ?alltourneys kpc')
 
-        if (!orgname) return msg.channel.send('Usage example: ?alltourneys kpc')
+    // if (orgname == "krunker esports" || orgname == "esports" || orgname == "krunker" || orgname == "esport") {
+    //     orgname = "KrunkerEsports"
 
-        if (orgname == "krunker esports" || orgname == "esports" || orgname == "krunker" || orgname == "esport") {
-            orgname = "KrunkerEsports"
-        }
+    // }
 
-        loadJSON(`https://www.kchub.net/api/organization/${orgname}`, myData, 'jsonp');
+    const arr = [] as any
+    const allembeds = [] as any
 
-        const buttonarray = [
-            { label: 'Previous', emoji: '◀️', style: ButtonStyle.Danger },
-            { label: 'Next', emoji: '▶️', style: ButtonStyle.Success },
-        ]
-        const allembeds = [] as any
-        async function myData(data) {
-            const tournaments = data.tournaments
 
-            tournaments.forEach(tourney => {
+    const krunkerresponse = await fetch("https://www.kchub.net/api/organization/KrunkerEsports");
+    const kpcresponse = await fetch("https://www.kchub.net/api/organization/KPC")
+    const nackresponse = await fetch("https://www.kchub.net/api/organization/NACK")
+    const ckaresponse = await fetch("https://www.kchub.net/api/organization/CKA")
 
-                if (tourney.bracketLink == null) {
-                    tourney.bracketLink = "No challonge brackets link"
-                }
 
-                allembeds.push(
-                    new EmbedBuilder()
-                        .setTitle(`All tournaments in ${orgname}!`)
-                        .addFields(
-                            { name: 'Name:', value: `${tourney.name}` },
-                            { name: 'Description:', value: `${tourney.description}` },
-                            { name: 'Region:', value: `${tourney.region}` },
-                            { name: 'Game mode:', value: `${tourney.type}` },
-                            { name: 'Signups closed?', value: `${tourney.signupsClosed}` },
-                            { name: 'Ended?', value: `${tourney.ended}` },
-                            { name: 'Brackets Link:', value: `${tourney.bracketLink}` },
-                        )
-                        .setColor("#ffdc3a")
-                        .setFooter({ text: `Host: ${tourney.hostName}` })
-                        .setTimestamp()
-                )
-            }); //end
 
+    if (orgname == "krunker esports" || orgname == "esports" || orgname == "krunker" || orgname == "esport") {
+
+        arr.push(krunkerresponse.json())
+
+        arr.forEach(async (whatsinside) => {
+
+            whatsinside.then(async (eacxh) => {
+
+                eacxh.tournaments.forEach(async (tourney) => {
+
+                    if (tourney.bracketLink == null) tourney.bracketLink = "No brackets link"
+
+
+                    allembeds.push(
+                        new EmbedBuilder()
+                            .setTitle(`All tournaments in Krunker!`)
+                            .addFields(
+                                { name: 'Name:', value: `${tourney.name}` },
+                                { name: 'Description:', value: `${tourney.description}` },
+                                { name: 'Region:', value: `${tourney.region}` },
+                                { name: 'Game mode:', value: `${tourney.type}` },
+                                { name: 'Signups closed?', value: `${tourney.signupsClosed}` },
+                                { name: 'Ended?', value: `${tourney.ended}` },
+                                { name: 'Brackets Link:', value: `${tourney.bracketLink}` },
+                            )
+                            .setColor("#ffdc3a")
+                            .setFooter({ text: `Host: ${tourney.hostName}` })
+                            .setTimestamp()
+                    )
+                })
+
+
+
+
+
+
+            })
+
+        })
+
+
+
+        setTimeout(async () => {
 
             await pagination({
                 embeds: allembeds, /** Array of embeds objects */
@@ -75,23 +79,315 @@ export const AllTourneys = async (msg: Message, args: String[], client: Client, 
                 pageTravel: false,
                 buttons: [
                     {
-                      type: 2,
-                      label: 'Previous Page',
-                      style: ButtonStyle.Primary,
-                      emoji: '◀️'
+                        type: 2,
+                        label: 'Previous Page',
+                        style: ButtonStyle.Primary,
+                        emoji: '◀️'
                     },
                     {
-                      type: 3,
-                      label: 'Next Page',
-                      style: ButtonStyle.Primary,
-                      emoji: '▶️' /** Disable emoji for this button */
+                        type: 3,
+                        label: 'Next Page',
+                        style: ButtonStyle.Primary,
+                        emoji: '▶️' /** Disable emoji for this button */
                     }
-                  ]
-                
-              });
-        }
+                ]
+
+            });
+
+        }, 1000 * 2.5);
+
+    } else if (orgname == "kpc") {
+
+        arr.push(kpcresponse.json())
+
+        arr.forEach(async (whatsinside) => {
+
+            whatsinside.then(async (eacxh) => {
+    
+                eacxh.tournaments.forEach(async (tourney) => {
+    
+                    if (tourney.bracketLink == null) tourney.bracketLink = "No brackets link"
+    
+    
+                    allembeds.push(
+                        new EmbedBuilder()
+                            .setTitle(`All tournaments in KPC!`)
+                            .addFields(
+                                { name: 'Name:', value: `${tourney.name}` },
+                                { name: 'Description:', value: `${tourney.description}` },
+                                { name: 'Region:', value: `${tourney.region}` },
+                                { name: 'Game mode:', value: `${tourney.type}` },
+                                { name: 'Signups closed?', value: `${tourney.signupsClosed}`},
+                                { name: 'Ended?', value: `${tourney.ended}` },
+                                { name: 'Brackets Link:', value: `${tourney.bracketLink}` },
+                            )
+                            .setColor("#ffdc3a")
+                            .setFooter({ text: `Host: ${tourney.hostName}` })
+                            .setTimestamp()
+                    )
+                })
+    
+    
+    
+    
+    
+    
+            })
+    
+        })
+    
+        
+    
+        setTimeout(async () => {
+    
+            await pagination({
+                embeds: allembeds, /** Array of embeds objects */
+                message: msg,
+                author: msg.author,
+                ephemeral: false,
+                time: 40000, /** 40 seconds */
+                disableButtons: false, /** Remove buttons after timeout */
+                fastSkip: false,
+                pageTravel: false,
+                buttons: [
+                    {
+                        type: 2,
+                        label: 'Previous Page',
+                        style: ButtonStyle.Primary,
+                        emoji: '◀️'
+                    },
+                    {
+                        type: 3,
+                        label: 'Next Page',
+                        style: ButtonStyle.Primary,
+                        emoji: '▶️' /** Disable emoji for this button */
+                    }
+                ]
+        
+            });
+            
+        }, 1000 * 2.5);
+
+    } else if (orgname == "nack") {
+        
+        arr.push(nackresponse.json())
+
+        arr.forEach(async (whatsinside) => {
+
+            whatsinside.then(async (eacxh) => {
+    
+                eacxh.tournaments.forEach(async (tourney) => {
+    
+                    if (tourney.bracketLink == null) tourney.bracketLink = "No brackets link"
+    
+    
+                    allembeds.push(
+                        new EmbedBuilder()
+                            .setTitle(`All tournaments in NACK!`)
+                            .addFields(
+                                { name: 'Name:', value: `${tourney.name}` },
+                                { name: 'Description:', value: `${tourney.description}` },
+                                { name: 'Region:', value: `${tourney.region}` },
+                                { name: 'Game mode:', value: `${tourney.type}` },
+                                { name: 'Signups closed?', value: `${tourney.signupsClosed}`},
+                                { name: 'Ended?', value: `${tourney.ended}` },
+                                { name: 'Brackets Link:', value: `${tourney.bracketLink}` },
+                            )
+                            .setColor("#ffdc3a")
+                            .setFooter({ text: `Host: ${tourney.hostName}` })
+                            .setTimestamp()
+                    )
+                })
+    
+    
+    
+    
+    
+    
+            })
+    
+        })
+    
+        
+    
+        setTimeout(async () => {
+    
+            await pagination({
+                embeds: allembeds, /** Array of embeds objects */
+                message: msg,
+                author: msg.author,
+                ephemeral: false,
+                time: 40000, /** 40 seconds */
+                disableButtons: false, /** Remove buttons after timeout */
+                fastSkip: false,
+                pageTravel: false,
+                buttons: [
+                    {
+                        type: 2,
+                        label: 'Previous Page',
+                        style: ButtonStyle.Primary,
+                        emoji: '◀️'
+                    },
+                    {
+                        type: 3,
+                        label: 'Next Page',
+                        style: ButtonStyle.Primary,
+                        emoji: '▶️' /** Disable emoji for this button */
+                    }
+                ]
+        
+            });
+            
+        }, 1000 * 2.5);
+    } else if (orgname == "cka") {
+        
+        arr.push(ckaresponse.json())
+
+        arr.forEach(async (whatsinside) => {
+
+            whatsinside.then(async (eacxh) => {
+    
+                eacxh.tournaments.forEach(async (tourney) => {
+    
+                    if (tourney.bracketLink == null) tourney.bracketLink = "No brackets link"
+    
+    
+                    allembeds.push(
+                        new EmbedBuilder()
+                            .setTitle(`All tournaments in CKA!`)
+                            .addFields(
+                                { name: 'Name:', value: `${tourney.name}` },
+                                { name: 'Description:', value: `${tourney.description}` },
+                                { name: 'Region:', value: `${tourney.region}` },
+                                { name: 'Game mode:', value: `${tourney.type}` },
+                                { name: 'Signups closed?', value: `${tourney.signupsClosed}`},
+                                { name: 'Ended?', value: `${tourney.ended}` },
+                                { name: 'Brackets Link:', value: `${tourney.bracketLink}` },
+                            )
+                            .setColor("#ffdc3a")
+                            .setFooter({ text: `Host: ${tourney.hostName}` })
+                            .setTimestamp()
+                    )
+                })
+    
+    
+    
+    
+    
+    
+            })
+    
+        })
+    
+        
+    
+        setTimeout(async () => {
+    
+            await pagination({
+                embeds: allembeds, /** Array of embeds objects */
+                message: msg,
+                author: msg.author,
+                ephemeral: false,
+                time: 40000, /** 40 seconds */
+                disableButtons: false, /** Remove buttons after timeout */
+                fastSkip: false,
+                pageTravel: false,
+                buttons: [
+                    {
+                        type: 2,
+                        label: 'Previous Page',
+                        style: ButtonStyle.Primary,
+                        emoji: '◀️'
+                    },
+                    {
+                        type: 3,
+                        label: 'Next Page',
+                        style: ButtonStyle.Primary,
+                        emoji: '▶️' /** Disable emoji for this button */
+                    }
+                ]
+        
+            });
+            
+        }, 1000 * 2.5);
+    } else if (!orgname) {
+
+        arr.push(krunkerresponse.json())
+        arr.push(kpcresponse.json())
+        arr.push(nackresponse.json())
+        arr.push(ckaresponse.json())
+
+        arr.forEach(async (whatsinside) => {
+
+            whatsinside.then(async (eacxh) => {
+
+                eacxh.tournaments.forEach(async (tourney) => {
+
+                    if (tourney.bracketLink == null) tourney.bracketLink = "No brackets link"
 
 
+                    allembeds.push(
+                        new EmbedBuilder()
+                            .setTitle(`All tournaments in all regions!`)
+                            .addFields(
+                                { name: 'Name:', value: `${tourney.name}` },
+                                { name: 'Description:', value: `${tourney.description}` },
+                                { name: 'Region:', value: `${tourney.region}` },
+                                { name: 'Game mode:', value: `${tourney.type}` },
+                                { name: 'Signups closed?', value: `${tourney.signupsClosed}` },
+                                { name: 'Ended?', value: `${tourney.ended}` },
+                                { name: 'Brackets Link:', value: `${tourney.bracketLink}` },
+                            )
+                            .setColor("#ffdc3a")
+                            .setFooter({ text: `Host: ${tourney.hostName}` })
+                            .setTimestamp()
+                    )
+                })
+
+
+
+
+
+
+            })
+
+        })
+
+
+
+        setTimeout(async () => {
+
+            await pagination({
+                embeds: allembeds, /** Array of embeds objects */
+                message: msg,
+                author: msg.author,
+                ephemeral: false,
+                time: 40000, /** 40 seconds */
+                disableButtons: false, /** Remove buttons after timeout */
+                fastSkip: false,
+                pageTravel: false,
+                buttons: [
+                    {
+                        type: 2,
+                        label: 'Previous Page',
+                        style: ButtonStyle.Primary,
+                        emoji: '◀️'
+                    },
+                    {
+                        type: 3,
+                        label: 'Next Page',
+                        style: ButtonStyle.Primary,
+                        emoji: '▶️' /** Disable emoji for this button */
+                    }
+                ]
+
+            });
+
+        }, 1000 * 2.5);
+
+
+    } else {
+        return msg.channel.send(`Example usage: ?alltourney { OPTION }\n\nAll options:\n\n**KPC**, **NACK**, **CKA**, **Krunker**.`)
     }
 
 
@@ -99,20 +395,20 @@ export const AllTourneys = async (msg: Message, args: String[], client: Client, 
 
 
 
-    // await paginationEmbed(
-    //     msg, // The interaction object
-    //     allembeds, // Your array of embeds
-    //     buttonarray, // Your array of buttons
-    //     60000, // (Optional) The timeout for the embed in ms, defaults to 60000 (1 minute)
-    //     'Page {current}/{total}' // (Optional) The text to display in the footer, defaults to 'Page {current}/{total}'
-    // );
-    // .setCommand(msg)
-    // .setPages(allembeds)
-    // .setButtons(buttonarray)
-    // .setPaginationCollector({ timeout: 120000 })
-    // .send();
+    // const allembeds = [] as any
+    // async function myData(data) {
+    //     const tournaments = data.tournaments
 
-    // console.log('jhi')
+    //     tournaments.forEach(tourney => {
+
+    //         if (tourney.bracketLink == null) {
+    //             tourney.bracketLink = "No challonge brackets link"
+    //         }
+
+
+    //     }); //end
 
 
 
+    // }
+}
