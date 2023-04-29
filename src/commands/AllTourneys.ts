@@ -389,26 +389,4 @@ export const AllTourneys = async (msg: Message, args: String[], client: Client, 
     } else {
         return msg.channel.send(`Example usage: ?alltourney { OPTION }\n\nAll options:\n\n**KPC**, **NACK**, **CKA**, **Krunker**.`)
     }
-
-
-
-
-
-
-    // const allembeds = [] as any
-    // async function myData(data) {
-    //     const tournaments = data.tournaments
-
-    //     tournaments.forEach(tourney => {
-
-    //         if (tourney.bracketLink == null) {
-    //             tourney.bracketLink = "No challonge brackets link"
-    //         }
-
-
-    //     }); //end
-
-
-
-    // }
 }
