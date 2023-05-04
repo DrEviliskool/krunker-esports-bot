@@ -1,7 +1,6 @@
-import { ActivityType, ButtonBuilder, ButtonStyle, CategoryChannel, ChannelType, Client, Embed, EmbedBuilder, GatewayIntentBits, Interaction, Message, PermissionsBitField, Role, TextChannel } from 'discord.js'
+import { ActivityType, Client, EmbedBuilder, GatewayIntentBits, Message, TextChannel } from 'discord.js'
 import dotenv from 'dotenv';
 import * as redis from "redis"
-import { XMLHttpRequest } from "xhr2"
 
 import {
   NewTeamAll,
@@ -53,8 +52,7 @@ export const redisClient = redis.createClient({
 
 
 redisClient.on('error', (err) => {
-  console.error(`REDDIS ERROR: ${err}`)
-  redisClient.quit()
+  console.log(`REDDIS ERROR: ${err}`)
 })
 redisClient.connect().then(ok => {
   console.log('Redis Client is ready!')
@@ -63,7 +61,7 @@ let msg: Message
 async function thesubscriber() {
 
 
-  const kpclog = client.channels.cache.get('1091733571397488660') as TextChannel
+  const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
   const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
   const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
   const esport = client.channels.cache.get('1097169881222365257') as TextChannel
@@ -83,7 +81,7 @@ async function thesubscriber() {
       client.guilds.fetch(server).then(async (guild) => {
         guild.bans.remove((await unbanneduser)).catch(async (err) => {
 
-          console.log(`Couldnt unban ${(await unbanneduser).tag} in ${guild.name}`)
+          console.log(`Couldnt unban ${(await unbanneduser).tag} in ${guild.name}.\n\nError: ${err}`)
         })
       })
     });
@@ -110,13 +108,13 @@ async function thesubscriber() {
       .setColor("#ffdc3a")
       .setTimestamp();
     
-    kpclog.send({ embeds: [unbanembed] });
-    ncklog.send({ embeds: [unbanembed] });
-    ckalog.send({ embeds: [unbanembed] });
-    esport.send({ embeds: [unbanembed] });
-    admins.send({ embeds: [unbanembed] });
+    await kpclog.send({ embeds: [unbanembed] });
+    await ncklog.send({ embeds: [unbanembed] });
+    await ckalog.send({ embeds: [unbanembed] });
+    await esport.send({ embeds: [unbanembed] });
+    await admins.send({ embeds: [unbanembed] });
 
-      console.log(`EXPIRED UNBAN: ${(await unbanneduser).tag} (${unbannedid})`)
+    console.log(`EXPIRED UNBAN: ${(await unbanneduser).tag} (${unbannedid})`)
   });
 }
 
@@ -151,9 +149,11 @@ client.on('messageCreate', (msg) => {
 
   switch (command) {
     case 'delcat':
+    case 'delcategory':
       DelCategory(msg, args, client)
       break;
     case 'endtourney':
+    case 'endtournament':
       EndTourney(msg, args, client)
       break;
     case 'givethemall':
