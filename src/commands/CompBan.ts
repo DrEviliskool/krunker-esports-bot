@@ -1,6 +1,6 @@
-import { Client, EmbedBuilder, Message, TextChannel, User } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { HumanizeDurationLanguage, HumanizeDuration } from 'humanize-duration-ts';
-import { redisClient } from "../bot";
+import { admins, ckalog, esport, kpclog, logger, ncklog, redisClient } from "../bot";
 import { OWNERS, serverarray } from "../config";
 import { leparser } from "../func/index";
 import { addSeconds } from "date-fns";
@@ -11,13 +11,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   if (!OWNERS.some(ID => msg.author?.id.includes(ID))) {
     return
   }
-  
   const service = new HumanizeDuration(new HumanizeDurationLanguage())
-  const kpclog = client.channels.cache.get('801552076726730752') as TextChannel 
-  const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
-  const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
-  const esport = client.channels.cache.get('1097169881222365257') as TextChannel
-  const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
   let theplayerid = args[0] as any
   if (!parseInt(theplayerid) || !theplayerid) return msg.channel.send('Example usage: ?compban **123456789** account sharing')
@@ -43,7 +37,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     })
 
     player.send({embeds: [dmembed]}).catch(err => {
-      console.log(`Couldn't dm ${player.tag}`)
+      logger.send(`Couldn't dm **${player.tag}**`)
     })
 
     setTimeout(async () => {
@@ -51,7 +45,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
       serverarray.forEach(async (server) => {
         await client.guilds.fetch(server).then(async (guild) => {
           await guild.bans.create(player, { reason: reason }).catch(err => {
-            console.log(`Couldnt ban ${player.tag} in ${guild.name}\nERROR:\n\n\n${err}`)
+            logger.send(`Couldnt ban **${player.tag}** in **${guild.name}**`)
   
           })
         })
@@ -103,7 +97,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   if (seconds > 0) {
 
     redisClient.set(rediskey, `Discord Tag: ${player.tag} ------- Ban Reason: ${reason}`, { EX: seconds }).catch(ok => {
-      console.log('Err line 68 ', ok)
+      logger.send(`Error in redisClient.set:\n\n${ok}`)
     })
 
 
@@ -118,13 +112,18 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     })
 
   player.send({ embeds: [dmembed] }).catch(err => {
-    console.log(`Couldn't dm ${player.tag}`)
+    logger.send(`Couldn't dm ${player.tag}`)
   })
     
   serverarray.forEach(server => {
     client.guilds.fetch(server).then(async guild => {
+
+      guild.bans.fetch(player.id).then(user => {
+          
+      }) 
+
       guild.bans.create(player, { reason: reason }).catch(async (err) => {
-        console.log(`Couldnt ban ${player.tag} in ${guild.name}`)
+        logger.send(`Couldnt ban **${player.tag}** in **${guild.name}**`)
   
       })
     })

@@ -39,6 +39,12 @@ const client = new Client({
   ],
 }) as Client
 const prefix = '?';
+export const logger = client.channels.cache.get('1103737409243451424') as TextChannel
+export const kpclog = client.channels.cache.get('801552076726730752') as  TextChannel
+export const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
+export const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
+export const esport = client.channels.cache.get('1097169881222365257') as TextChannel
+export const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
 
 
@@ -52,20 +58,14 @@ export const redisClient = redis.createClient({
 
 
 redisClient.on('error', (err) => {
-  console.log(`REDDIS ERROR: ${err}`)
+  logger.send(`REDDIS ERROR:\n\n${err}`)
 })
-redisClient.connect().then(ok => {
+redisClient.connect().then(() => {
   console.log('Redis Client is ready!')
 })
+
 let msg: Message
 async function thesubscriber() {
-
-
-  const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
-  const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
-  const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
-  const esport = client.channels.cache.get('1097169881222365257') as TextChannel
-  const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
   redisClient.sendCommand(['CONFIG', 'SET', 'notify-keyspace-events', 'xE'])
   const subscriber = redisClient.duplicate()
@@ -75,13 +75,12 @@ async function thesubscriber() {
 
   await subscriber.subscribe('__keyevent@0__:expired', async (message) => {
     const unbannedid = message.replace("banned-", "")
-    const unbanneduser = client.users.fetch(unbannedid)
+    const unbanneduser = await client.users.fetch(unbannedid)
 
     serverarray.forEach(server => {
       client.guilds.fetch(server).then(async (guild) => {
-        guild.bans.remove((await unbanneduser)).catch(async (err) => {
-
-          console.log(`Couldnt unban ${(await unbanneduser).tag} in ${guild.name}.\n\nError: ${err}`)
+        guild.bans.remove(unbanneduser).catch(async (err) => {
+          logger.send(`Couldnt unban **${unbanneduser.tag}** in **${guild.name}.**`)
         })
       })
     });
@@ -98,12 +97,12 @@ async function thesubscriber() {
       .setColor("#ffdc3a")
       .setTimestamp();
 
-    ; (await unbanneduser).send({ embeds: [dmunbanembed] }).catch(async err => {
-      console.log(`Couldnt dm ${(await unbanneduser).tag}`)
+    unbanneduser.send({ embeds: [dmunbanembed] }).catch(async err => {
+      logger.send(`Couldnt dm **${unbanneduser.tag}**`)
     })
       
     const unbanembed = new EmbedBuilder()
-      .setAuthor({ name: `${(await unbanneduser).tag} (${(await unbanneduser).id})` })
+      .setAuthor({ name: `${unbanneduser.tag} (${unbanneduser.id})` })
       .setTitle('Was unbanned automatically, time expired.')
       .setColor("#ffdc3a")
       .setTimestamp();
@@ -114,14 +113,14 @@ async function thesubscriber() {
     await esport.send({ embeds: [unbanembed] });
     await admins.send({ embeds: [unbanembed] });
 
-    console.log(`EXPIRED UNBAN: ${(await unbanneduser).tag} (${unbannedid})`)
+    logger.send(`EXPIRED UNBAN: ${unbanneduser.tag} (${unbannedid})`)
   });
 }
 
-client.on('ready', () => {
 
-  
-  thesubscriber()
+
+
+client.on('ready', async () => {
 
 
   console.log('Bot is ready!');
@@ -134,6 +133,9 @@ client.on('ready', () => {
       }
     ]
   })
+
+  thesubscriber()
+
 });
 
 client.on('messageCreate', (msg) => {
@@ -144,7 +146,7 @@ client.on('messageCreate', (msg) => {
   const args = msg.content.slice(prefix.length).trim().split(/ +/);
   const command = args.shift()?.toLowerCase()
 
-  let interaction
+  let interaction:any
 
 
   switch (command) {
