@@ -13,7 +13,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   }
 
   const logger = client.channels.cache.get('1103737409243451424') as TextChannel
-  const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
+  const kpclog = client.channels.cache.get('801552076726730752') as  TextChannel
   const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
   const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
   const esport = client.channels.cache.get('1097169881222365257') as TextChannel
@@ -24,19 +24,20 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   let theplayerid = args[0] as any
   if (!parseInt(theplayerid) || !theplayerid) return msg.channel.send('Example usage: ?compban **123456789** account sharing')
 
-  const player = await client.users.fetch(theplayerid!).catch(async (err) => {
-    logger.send(`**${msg.author.tag}** got an error in **?compban:**\n\nError: **${err}**.`)
-    msg.channel.send('Invalid user.\n\nExample usage: ?compban **123456789**.')
-    return
-  }) as User
+  let player:User
 
-  if (!args[1]) return msg.channel.send('Example usage: ?compban 123456789 90d **Account sharing** or ?compban 123456789 **Alting** (perm)')
+  try {
+    player = await client.users.fetch(theplayerid!)
+  } catch (err) {
+    logger.send(`**${msg.author.tag}** got an error in **?compban:**\n\nError: **${err}**.`)
+    msg.channel.send('Invalid user **__ID__**.\n\nExample usage: ?compban **123456789** 90d account sharing or ?compban **123456789** Alting (perm).')
+    return
+  }
+
+  if (!args[1]) return msg.channel.send(`Example usage: ?compban 123456789 90d account sharing or ?compban 123456789 Alting (perm).`)
 
   const time = leparser(args[1])
   const seconds = time! / 1000
-
-
-
 
   if (!time && args[1]) {
 
@@ -58,7 +59,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
       serverarray.forEach(async (server) => {
         await client.guilds.fetch(server).then(async (guild) => {
 
-          await guild.bans.create(player, { reason: reason })
+          await guild.bans.create(player, { reason: reason} )
 
         })
       })

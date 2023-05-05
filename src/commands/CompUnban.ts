@@ -10,7 +10,7 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     }
 
     const logger = client.channels.cache.get('1103737409243451424') as TextChannel
-    const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
+    const kpclog = client.channels.cache.get('801552076726730752') as  TextChannel
     const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
     const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
     const esport = client.channels.cache.get('1097169881222365257') as TextChannel
@@ -22,14 +22,15 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     if (!theplayerid || !args[0]) return msg.channel.send('Example usage: ?compunban **123456789**')
 
 
-    const player = await client.users.fetch(theplayerid!).catch(async (err) => {
-        logger.send(`**${msg.author.tag}** got an error in **?compunban:**\n\nError: **${err}**.`)
-        msg.channel.send('Invalid user.\n\nExample usage: ?compunban **123456789**')
-        return
-    }) as User
+    let player:User
 
-
-    if (!player) return msg.channel.send('Invalid user.\n\nExample usage: ?compunban **123456789**')
+    try {
+      player = await client.users.fetch(theplayerid!)
+    } catch (err) {
+      logger.send(`**${msg.author.tag}** got an error in **?compunban:**\n\nError: **${err}**.`)
+      msg.channel.send('Invalid user **__ID__**.\n\nExample usage: ?compunban **123456789**.')
+      return
+    }
 
 
     try {
