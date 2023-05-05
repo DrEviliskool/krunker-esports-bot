@@ -27,6 +27,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   const player = await client.users.fetch(theplayerid!).catch(async (err) => {
     logger.send(`**${msg.author.tag}** got an error in **?compban:**\n\nError: **${err}**.`)
     msg.channel.send('Invalid user.\n\nExample usage: ?compban **123456789**.')
+    return
   }) as User
 
   if (!args[1]) return msg.channel.send('Example usage: ?compban 123456789 90d **Account sharing** or ?compban 123456789 **Alting** (perm)')

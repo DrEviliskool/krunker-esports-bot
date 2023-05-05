@@ -25,6 +25,7 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     const player = await client.users.fetch(theplayerid!).catch(async (err) => {
         logger.send(`**${msg.author.tag}** got an error in **?compunban:**\n\nError: **${err}**.`)
         msg.channel.send('Invalid user.\n\nExample usage: ?compunban **123456789**')
+        return
     }) as User
 
 
