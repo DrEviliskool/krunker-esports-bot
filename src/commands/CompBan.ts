@@ -29,7 +29,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     msg.channel.send('Invalid user.\n\nExample usage: ?compban **123456789**.')
   }) as User
 
-  if (!player || !args[1]) return msg.channel.send('Example usage: ?compban 123456789 90d Account sharing or ?compban 123456789 test (perm)')
+  if (!args[1]) return msg.channel.send('Example usage: ?compban 123456789 90d **Account sharing** or ?compban 123456789 **Alting** (perm)')
 
   const time = leparser(args[1])
   const seconds = time! / 1000
