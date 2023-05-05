@@ -39,12 +39,12 @@ const client = new Client({
   ],
 }) as Client
 const prefix = '?';
-export const logger = client.channels.cache.get('1103737409243451424') as TextChannel
-export const kpclog = client.channels.cache.get('801552076726730752') as  TextChannel
-export const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
-export const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
-export const esport = client.channels.cache.get('1097169881222365257') as TextChannel
-export const admins = client.channels.cache.get('1060536650918281296') as TextChannel
+const logger = client.channels.cache.get('1103737409243451424') as TextChannel
+const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
+const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
+const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
+const esport = client.channels.cache.get('1097169881222365257') as TextChannel
+const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
 
 
@@ -161,7 +161,7 @@ client.on('messageCreate', (msg) => {
     case 'givethemall':
       GiveThemAll(msg, args, client)
       break;
-    case 'newteamall':
+    case 'okkk':
       NewTeamAll(msg, args, client)
       break;
     case 'alltourneys':
