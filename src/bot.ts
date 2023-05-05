@@ -173,7 +173,8 @@ client.on('messageCreate', (msg) => {
     case 'givethemall':
       GiveThemAll(msg, args, client)
       break;
-    case 'okkk':
+    case 'newteamall':
+    case 'newtourney':
       NewTeamAll(msg, args, client)
       break;
     case 'alltourneys':
