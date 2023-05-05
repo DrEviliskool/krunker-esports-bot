@@ -1,4 +1,4 @@
-import { ActivityType, Client, EmbedBuilder, GatewayIntentBits, Message, TextChannel } from 'discord.js'
+import { ActivityType, Client, EmbedBuilder, GatewayIntentBits, Message, TextChannel, User } from 'discord.js'
 import dotenv from 'dotenv';
 import * as redis from "redis"
 
@@ -64,7 +64,7 @@ redisClient.connect().then(() => {
   console.log('Redis Client is ready!')
 })
 
-let msg: Message
+
 async function thesubscriber() {
 
   redisClient.sendCommand(['CONFIG', 'SET', 'notify-keyspace-events', 'xE'])
@@ -75,15 +75,27 @@ async function thesubscriber() {
 
   await subscriber.subscribe('__keyevent@0__:expired', async (message) => {
     const unbannedid = message.replace("banned-", "")
-    const unbanneduser = await client.users.fetch(unbannedid)
+    const unbanneduser = await client.users.fetch(unbannedid).catch(async (err) => {
 
-    serverarray.forEach(server => {
-      client.guilds.fetch(server).then(async (guild) => {
-        guild.bans.remove(unbanneduser).catch(async (err) => {
-          logger.send(`Couldnt unban **${unbanneduser.tag}** in **${guild.name}.**`)
+      logger.send(`<@937071829410000987> Problem in auto unban.\n\nError: **${err}**.`)
+
+    }) as User
+
+    try {
+
+      serverarray.forEach(server => {
+        client.guilds.fetch(server).then(async (guild) => {
+          guild.bans.remove(unbanneduser, "Ban expired - Unbanned automatically")
         })
-      })
-    });
+      });
+
+    } catch (err) {
+
+      logger.send(`<@937071829410000987> Problem in auto unban - Couldn't unban **${unbanneduser.tag}** in any of the pug servers.`)
+
+    }
+
+
 
     const dmunbanembed = new EmbedBuilder()
       .setTitle('You have been esport unbanned!')
@@ -98,7 +110,7 @@ async function thesubscriber() {
       .setTimestamp();
 
     unbanneduser.send({ embeds: [dmunbanembed] }).catch(async err => {
-      logger.send(`Couldnt dm **${unbanneduser.tag}**`)
+      logger.send(`Couldn't dm **${unbanneduser.tag}**`)
     })
       
     const unbanembed = new EmbedBuilder()

@@ -1,4 +1,4 @@
-import { Client, EmbedBuilder, Message, TextChannel } from "discord.js";
+import { Client, EmbedBuilder, Message, TextChannel, User } from "discord.js";
 import { HumanizeDurationLanguage, HumanizeDuration } from 'humanize-duration-ts';
 import { redisClient } from "../bot";
 import { OWNERS, serverarray } from "../config";
@@ -18,13 +18,17 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
   const esport = client.channels.cache.get('1097169881222365257') as TextChannel
   const admins = client.channels.cache.get('1060536650918281296') as TextChannel
-  
+
   const service = new HumanizeDuration(new HumanizeDurationLanguage())
 
   let theplayerid = args[0] as any
   if (!parseInt(theplayerid) || !theplayerid) return msg.channel.send('Example usage: ?compban **123456789** account sharing')
 
-  const player = await client.users.fetch(theplayerid!)
+  const player = await client.users.fetch(theplayerid!).catch(async (err) => {
+    logger.send(`**${msg.author.tag}** got an error in **?compban:**\n\nError: **${err}**.`)
+    msg.channel.send('Invalid user.\n\nExample usage: ?compban **123456789**.')
+  }) as User
+
   if (!player || !args[1]) return msg.channel.send('Example usage: ?compban 123456789 90d Account sharing or ?compban 123456789 test (perm)')
 
   const time = leparser(args[1])
@@ -37,7 +41,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
     const reason = args.slice(1).join(" ")
     const dmembed = new EmbedBuilder()
-      .setDescription(`Hello ${player.username}, you have been **permanently** esport banned.\n\nReason: **${reason}.**`)
+      .setDescription(`Hello **${player.tag}**, you have been **permanently** esport banned.\n\nReason: **${reason}.**`)
       .setColor("#ffdc3a")
       .setTimestamp()
       .setFooter({
@@ -48,19 +52,20 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
       logger.send(`Couldn't dm **${player.tag}**`)
     })
 
-    setTimeout(async () => {
+    try {
 
       serverarray.forEach(async (server) => {
         await client.guilds.fetch(server).then(async (guild) => {
-          await guild.bans.create(player, { reason: reason }).catch(err => {
-            logger.send(`Couldnt ban **${player.tag}** in **${guild.name}**`)
 
-          })
+          await guild.bans.create(player, { reason: reason })
+
         })
       })
 
-    }, 1000 * 2);
-
+    } catch (err) {
+      msg.channel.send(`Couldn't ban **${player.tag}** in any of the pug servers.`)
+      return logger.send(`Couldn't ban **${player.tag}** in any of the pug servers.\n\nError: **${err}**.`)
+    }
 
     const banembed = new EmbedBuilder()
       .setTitle('New Esport Ban!')
@@ -70,7 +75,9 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
         { name: `Ban duration:`, value: `Permanent`, inline: true },
 
       )
-      .setThumbnail((await client.guilds.fetch('623849289403334656')).iconURL())
+      .setThumbnail(
+        (await client.guilds.fetch('623849289403334656')).iconURL()
+      )
       .setAuthor({ name: `${player.tag} (${player.id})`, iconURL: player.displayAvatarURL() })
       .setColor('Red')
       .setTimestamp()
@@ -86,7 +93,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
     const currentchanneldoneemebed = new EmbedBuilder()
       .setTitle('Successfully done!')
-      .setDescription(`**${player.tag}** has been **permanently** esport banned.\n\nReason: **${reason}**`)
+      .setDescription(`**${player.tag}** has been **permanently** esport banned.\n\nReason: **${reason}**.`)
       .setColor("#ffdc3a")
       .setTimestamp();
 
@@ -105,14 +112,14 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   if (seconds > 0) {
 
     redisClient.set(rediskey, `Discord Tag: ${player.tag} ------- Ban Reason: ${reason}`, { EX: seconds }).catch(ok => {
-      logger.send(`Error in redisClient.set:\n\n${ok}`)
+      logger.send(`Error in redisClient.set:\n\nError: **${ok}**.`)
     })
 
 
   }
 
   const dmembed = new EmbedBuilder()
-    .setDescription(`Hello ${player.username}, you have been esport banned for **${prettytime}**.\n\nReason: ${reason}`)
+    .setDescription(`Hello **${player.tag}**, you have been esport banned for **${prettytime}**.\n\nReason: **${reason}**.`)
     .setColor("#ffdc3a")
     .setTimestamp()
     .setFooter({
@@ -120,22 +127,27 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     })
 
   player.send({ embeds: [dmembed] }).catch(err => {
-    logger.send(`Couldn't dm ${player.tag}`)
+    logger.send(`Couldn't dm **${player.tag}**`)
   })
 
-  serverarray.forEach(server => {
-    client.guilds.fetch(server).then(async guild => {
+  try {
 
-      guild.bans.fetch(player.id).then(user => {
+    serverarray.forEach(server => {
+      client.guilds.fetch(server).then(async guild => {
 
-      })
-
-      guild.bans.create(player, { reason: reason }).catch(async (err) => {
-        logger.send(`Couldnt ban **${player.tag}** in **${guild.name}**`)
+        guild.bans.create(player, { reason: reason })
 
       })
     })
-  })
+
+
+  } catch (err) {
+    msg.channel.send(`Couldn't ban **${player.tag}** in any of the pug servers.`)
+    logger.send(`Couldn't ban **${player.tag}** in any of the pug servers.\n\nError: **${err}**.`)
+    return
+  }
+
+
 
   let thetime = addSeconds(Date.now(), seconds)
   const realtime = Math.floor(thetime.getTime() / 1000)
