@@ -1,9 +1,11 @@
-import { Client, EmbedBuilder, Message, TextChannel, User } from "discord.js";
+import { ButtonStyle, Client, Embed, EmbedBuilder, Message, TextChannel, User } from "discord.js";
 import { HumanizeDurationLanguage, HumanizeDuration } from 'humanize-duration-ts';
 import { redisClient } from "../bot";
 import { OWNERS, serverarray } from "../config";
 import { leparser } from "../func/index";
 import { addSeconds } from "date-fns";
+import { pagination } from "@devraelfreeze/discordjs-pagination";
+
 
 
 export const CompBan = async (msg: Message, args: string[], client: Client) => {
@@ -13,7 +15,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   }
 
   const logger = client.channels.cache.get('1103737409243451424') as TextChannel
-  const kpclog = client.channels.cache.get('801552076726730752') as  TextChannel
+  const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
   const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
   const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
   const esport = client.channels.cache.get('1097169881222365257') as TextChannel
@@ -21,10 +23,98 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
   const service = new HumanizeDuration(new HumanizeDurationLanguage())
 
-  let theplayerid = args[0] as any
+  if (args[0] === "view") {
+    const allembeds:any[] = []
+
+
+    redisClient.sendCommand(['KEYS', '*']).then((keys: any) => {
+
+      keys.forEach(async (value) => {
+        let id = value.replace("banned-", "")
+
+
+        let unbanneduser: User
+        try {
+          unbanneduser = await client.users.fetch(id!)
+        } catch (err) {
+          return console.log(err)
+        }
+
+        redisClient.get(value).then(async (banreason) => {
+
+          redisClient.ttl(value).then(async (time) => {
+
+            const timeleft = service.humanize(time*1000, { largest: 2 })
+
+            allembeds.push(
+
+              new EmbedBuilder()
+                .setTitle('All temp esport banned users:')
+                .setColor("#ffdc3a")
+                .setThumbnail((await client.guilds.fetch('623849289403334656')).iconURL())
+                .setTimestamp()
+                .addFields(
+                  { name: `User Tag:`, value: `${unbanneduser.tag}`, inline: true },
+                  { name: `User ID:`, value: `${unbanneduser.id}`, inline: true },
+                  { name: `Ban Reason:`, value: `${banreason}`, inline: true },
+                  { name: `Time left:`, value: `${timeleft}`, inline: true },
+                )
+
+              )
+
+
+
+            // console.log(`User: ${unbanneduser.tag}\nReason: ${banreason}\nTime left: ${service.humanize(time*1000, { largest: 2 } )}`)
+          })
+        })
+
+
+
+      })
+    }).then(() => {
+
+      setTimeout(async () => {
+
+        await pagination({
+            embeds: allembeds, /** Array of embeds objects */
+            message: msg,
+            author: msg.author,
+            ephemeral: false,
+            time: 80000, /** 80 seconds */
+            disableButtons: true, /** Remove buttons after timeout */
+            fastSkip: false,
+            pageTravel: true,
+            buttons: [
+                {
+                    type: 2,
+                    label: 'Previous Page',
+                    style: ButtonStyle.Primary,
+                    emoji: '◀️'
+                },
+                {
+                    type: 3,
+                    label: 'Next Page',
+                    style: ButtonStyle.Primary,
+                    emoji: '▶️' /** Disable emoji for this button */
+                }
+            ]
+  
+        });
+  
+    }, 1000 * 6);
+
+
+    })
+
+
+
+  } else {
+
+
+    let theplayerid = args[0] as any
   if (!parseInt(theplayerid) || !theplayerid) return msg.channel.send('Example usage: ?compban **123456789** account sharing')
 
-  let player:User
+  let player: User
 
   try {
     player = await client.users.fetch(theplayerid!)
@@ -54,20 +144,27 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
       logger.send(`Couldn't dm **${player.tag}**`)
     })
 
-    try {
+    setTimeout(async () => {
 
-      serverarray.forEach(async (server) => {
-        await client.guilds.fetch(server).then(async (guild) => {
+      try {
 
-          await guild.bans.create(player, { reason: reason} )
-
+        serverarray.forEach(async (server) => {
+          await client.guilds.fetch(server).then(async (guild) => {
+  
+            await guild.bans.create(player, { reason: reason })
+  
+          })
         })
-      })
+  
+      } catch (err) {
+        msg.channel.send(`Couldn't ban **${player.tag}** in any of the pug servers.`)
+        logger.send(`Couldn't ban **${player.tag}** in any of the pug servers.\n\nError: **${err}**.`)
+        return
+      }
+      
+    }, 1000 * 3);
 
-    } catch (err) {
-      msg.channel.send(`Couldn't ban **${player.tag}** in any of the pug servers.`)
-      return logger.send(`Couldn't ban **${player.tag}** in any of the pug servers.\n\nError: **${err}**.`)
-    }
+
 
     const banembed = new EmbedBuilder()
       .setTitle('New Esport Ban!')
@@ -138,19 +235,19 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
       serverarray.forEach(server => {
         client.guilds.fetch(server).then(async guild => {
-  
+
           guild.bans.create(player, { reason: reason })
-  
+
         })
       })
-  
-  
+
+
     } catch (err) {
       msg.channel.send(`Couldn't ban **${player.tag}** in any of the pug servers.`)
       logger.send(`Couldn't ban **${player.tag}** in any of the pug servers.\n\nError: **${err}**.`)
       return
     }
-    
+
   }, 1000 * 3);
 
 
@@ -189,38 +286,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   msg.channel.send({ embeds: [currentchanneldoneemebed] })
 
 
-  // if (args[0] === "view") {
+  }
 
-    
-  //   redisClient.sendCommand(['KEYS', '*']).then((keys: any) => {
-
-  //     keys.forEach(async (value) => {
-  //       let id = value.replace("banned-", "")
-  
-  
-  //       let unbanneduser: User
-  //       try {
-  //         unbanneduser = await client.users.fetch(id!)
-  //       } catch (err) {
-  //         return console.log('hey')
-  //       }
-  
-  //       redisClient.get(value).then(reason => {
-  
-  //         redisClient.ttl(value).then(time => {
-  
-  //           console.log(`User: ${unbanneduser.tag}\nReason: ${reason}\nTime left: ${service.humanize(time*1000, { largest: 2})}`)
-  //         })
-  //       })
-  
-  
-  
-  //     })
-  //   }).catch((err: Error) => {
-  //     console.error(err);
-  //   });
-
-
-  // }
 
 }
