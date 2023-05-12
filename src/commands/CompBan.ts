@@ -62,9 +62,6 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
               )
 
-
-
-            // console.log(`User: ${unbanneduser.tag}\nReason: ${banreason}\nTime left: ${service.humanize(time*1000, { largest: 2 } )}`)
           })
         })
 
