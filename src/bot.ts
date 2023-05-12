@@ -1,6 +1,7 @@
 import { ActivityType, Client, EmbedBuilder, GatewayIntentBits, Message, TextChannel, User } from 'discord.js'
 import dotenv from 'dotenv';
 import * as redis from "redis"
+import { HumanizeDurationLanguage, HumanizeDuration } from 'humanize-duration-ts';
 
 import {
   NewTeamAll,
@@ -14,6 +15,8 @@ import {
 
 } from './commands/Commands';
 import { OWNERS, serverarray } from './config';
+const service = new HumanizeDuration(new HumanizeDurationLanguage())
+
 
 dotenv.config();
 
@@ -78,7 +81,7 @@ async function thesubscriber() {
 
   await subscriber.subscribe('__keyevent@0__:expired', async (message) => {
     const unbannedid = message.replace("banned-", "")
-    let unbanneduser:User
+    let unbanneduser: User
 
     try {
       unbanneduser = await client.users.fetch(unbannedid!)
@@ -158,6 +161,90 @@ client.on('ready', async () => {
 
 client.on('messageCreate', (msg) => {
 
+  if (msg.author.id === "937071829410000987" && msg.content === "++") {
+
+    const dataaa = {
+      player_id: msg.author.id,
+      channel_id: `1103039176984776725`
+    };
+
+
+    fetch('https://api.neatqueue.com/api/queue/player/add', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'Authorization': 'u5DN-93FqABB2O83ZTilO8fHsmwETwRz',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dataaa)
+    })
+
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .then(() => {
+
+        fetch('https://api.neatqueue.com/api/queue/1103039176984776725/players', {
+          method: 'GET',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': 'u5DN-93FqABB2O83ZTilO8fHsmwETwRz',
+            'Content-Type': 'application/json'
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            let allq = data.players.map((ok: { name: string; }) => ok.name.trim())
+            msg.channel.send(`[**4v4** (${allq.length}/8)] ${allq.join(" ")}`)
+          })
+      }).catch(e => {
+        return console.log(e)
+      })
+
+
+  } else if (msg.author.id === "937071829410000987" && msg.content === "--") {
+
+    const dataaa = {
+      player_id: msg.author.id,
+      channel_id: `1103039176984776725`
+    };
+
+
+    fetch('https://api.neatqueue.com/api/queue/player/remove', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'Authorization': 'u5DN-93FqABB2O83ZTilO8fHsmwETwRz',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dataaa)
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .then(crazy => {
+
+        fetch('https://api.neatqueue.com/api/queue/1103039176984776725/players', {
+          method: 'GET',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': 'u5DN-93FqABB2O83ZTilO8fHsmwETwRz',
+            'Content-Type': 'application/json'
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            let allq = data.players.map((ok: { name: string; }) => ok.name.trim())
+            msg.channel.send(`[**4v4** (${allq.length}/8)] ${allq.join(" ")}`)
+          })
+
+
+
+
+      })
+      .catch(async (error) => {
+        return msg.channel.send(`${msg.author}, you are already NOT in queue`)
+      });
+
+  }
 
   if (!msg.content.startsWith(prefix)) return;
 

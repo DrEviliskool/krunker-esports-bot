@@ -132,22 +132,28 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     logger.send(`Couldn't dm **${player.tag}**`)
   })
 
-  try {
+  setTimeout(() => {
 
-    serverarray.forEach(server => {
-      client.guilds.fetch(server).then(async guild => {
+    try {
 
-        guild.bans.create(player, { reason: reason })
-
+      serverarray.forEach(server => {
+        client.guilds.fetch(server).then(async guild => {
+  
+          guild.bans.create(player, { reason: reason })
+  
+        })
       })
-    })
+  
+  
+    } catch (err) {
+      msg.channel.send(`Couldn't ban **${player.tag}** in any of the pug servers.`)
+      logger.send(`Couldn't ban **${player.tag}** in any of the pug servers.\n\nError: **${err}**.`)
+      return
+    }
+    
+  }, 1000 * 3);
 
 
-  } catch (err) {
-    msg.channel.send(`Couldn't ban **${player.tag}** in any of the pug servers.`)
-    logger.send(`Couldn't ban **${player.tag}** in any of the pug servers.\n\nError: **${err}**.`)
-    return
-  }
 
 
 
@@ -181,5 +187,40 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     .setTimestamp();
 
   msg.channel.send({ embeds: [currentchanneldoneemebed] })
+
+
+  // if (args[0] === "view") {
+
+    
+  //   redisClient.sendCommand(['KEYS', '*']).then((keys: any) => {
+
+  //     keys.forEach(async (value) => {
+  //       let id = value.replace("banned-", "")
+  
+  
+  //       let unbanneduser: User
+  //       try {
+  //         unbanneduser = await client.users.fetch(id!)
+  //       } catch (err) {
+  //         return console.log('hey')
+  //       }
+  
+  //       redisClient.get(value).then(reason => {
+  
+  //         redisClient.ttl(value).then(time => {
+  
+  //           console.log(`User: ${unbanneduser.tag}\nReason: ${reason}\nTime left: ${service.humanize(time*1000, { largest: 2})}`)
+  //         })
+  //       })
+  
+  
+  
+  //     })
+  //   }).catch((err: Error) => {
+  //     console.error(err);
+  //   });
+
+
+  // }
 
 }
