@@ -305,4 +305,4 @@ client2.on('ready', () => {
 
 
 
-client2.login('OTEyMDE1MDQ3NjYyOTI3ODky.G6mR5V.WjwgPoCILAndV8KD-76-AMdexCdr6ZxFjZTeFE')
+client2.login(process.env.BOT_TOKEN_GPT)
