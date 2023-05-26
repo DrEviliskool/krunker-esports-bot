@@ -3,7 +3,7 @@
         "target": "ESNext",
         "module": "CommonJS",
         "rootDirs": [
-            "./src/",
+            "./main/",
             "./config/"
         ],
         "strict": true,
@@ -24,7 +24,7 @@
         "baseUrl": "./"
     },
     "include": [
-        "./**/*.ts", "src/func/index.ts",
+        "./**/*.ts", "main/func/index.ts",
     ],
     "exclude": [
         "node_modules",

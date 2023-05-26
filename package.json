@@ -9,9 +9,9 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/bot.js",
+    "start": "node main/bot.js",
     "tsc": "tsc",
-    "start:dev": "npx ts-node ./src/bot.ts"
+    "start:dev": "npx ts-node ./main/bot.ts"
   },
   "author": "DrEvil",
   "license": "ISC",
