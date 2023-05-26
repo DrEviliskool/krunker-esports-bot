@@ -15,7 +15,8 @@ import {
 
 } from './commands/Commands';
 import { OWNERS, serverarray } from './config';
-const service = new HumanizeDuration(new HumanizeDurationLanguage())
+import ms from './func/declare';
+import { ChatGPTAPI } from '@twinklepkg/chatgpt';
 
 
 dotenv.config();
@@ -58,16 +59,29 @@ export const redisClient = redis.createClient({
 redisClient.on('error', (err) => {
   console.log(`REDDIS ERROR:\n\n${err}`)
 })
-redisClient.connect().then(() => {
-  console.log('Redis Client is ready!')
-})
+async function redisOn() {
 
+  redisClient.connect().then(() => {
+    console.log('Redis Client is ready!')
+  })
+
+  setTimeout(() => {
+
+    redisOn()
+    
+  }, 1000 * 3600000);
+
+
+  
+}
+
+redisOn()
 
 async function thesubscriber() {
 
 
   const logger = client.channels.cache.get('1103737409243451424') as TextChannel
-  const kpclog = client.channels.cache.get('801552076726730752') as  TextChannel
+  const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
   const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
   const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
   const esport = client.channels.cache.get('1097169881222365257') as TextChannel
@@ -144,7 +158,7 @@ async function thesubscriber() {
 client.on('ready', async () => {
 
 
-  console.log('Bot is ready!');
+  console.log(`${client.user?.tag} is now online`);
   client.user?.setPresence({
     status: "online",
     activities: [
@@ -159,7 +173,8 @@ client.on('ready', async () => {
 
 });
 
-client.on('messageCreate', (msg) => {
+client.on('messageCreate', async (msg) => {
+
 
   if (!msg.content.startsWith(prefix)) return;
 
@@ -202,3 +217,92 @@ client.on('messageCreate', (msg) => {
 })
 
 client.login(process.env.BOT_TOKEN);
+
+
+
+
+
+
+
+
+
+const client2 = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildBans,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildPresences,
+  ],
+}) as Client
+
+client2.on('messageCreate', async (msg) => {
+
+  const args = msg.content.slice(prefix.length).trim().split(/ +/);
+  const command = args.shift()?.toLowerCase()
+
+  if (command === "chatgpt") {
+
+
+
+    const loadingms = await msg.channel.send(`${msg.author}\n\nPlease wait ...`)
+
+
+    async function thesenderlolxd() {
+
+      const importDynamic = new Function('modulePath', 'return import(modulePath)')
+      const { ChatGPTAPI } = await importDynamic('@twinklepkg/chatgpt')
+  
+      const api = new ChatGPTAPI({ apiKey: "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",  }) as ChatGPTAPI
+
+      const res = await api.sendMessage('What is openai in 250 words!', {
+        onProgress(partialResponse) {
+
+
+          setTimeout(() => {
+
+
+            loadingms.edit(partialResponse.text)
+
+
+          }, 1000 * 5 );
+        },
+      }
+      // , {
+      //   onProgress: (partialResponse) => loadingms.edit(partialResponse.text)
+      // }
+      
+      )
+      
+      loadingms.edit(`\n\n${res.text}`)
+      
+    }
+
+    thesenderlolxd()
+
+
+
+  }
+})
+
+client2.on('ready', () => {
+  console.log(`${client2.user?.tag} is now online`)
+  client2.user?.setPresence({
+    status: "online",
+    activities: [
+      {
+        name: "with Anthropic",
+        type: ActivityType.Competing
+      }
+    ]
+  })
+})
+
+
+
+
+
+client2.login('OTEyMDE1MDQ3NjYyOTI3ODky.G6mR5V.WjwgPoCILAndV8KD-76-AMdexCdr6ZxFjZTeFE')

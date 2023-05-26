@@ -1,3 +1,9 @@
 node_modules/
 .env
 o.txt
+src/
+ok.js
+ok.json
+package.json
+package-lock.json
+tsconfig.json

@@ -11,7 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/bot.js",
     "tsc": "tsc",
-    "start:dev": "nodemon ./src/bot.ts"
+    "start:dev": "npx ts-node ./src/bot.ts"
   },
   "author": "DrEvil",
   "license": "ISC",
@@ -19,6 +19,8 @@
     "@devraelfreeze/discordjs-pagination": "^2.7.4",
     "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.14.0",
+    "@twinklepkg/chatgpt": "^4.1.7",
+    "chatgpt": "^5.2.4",
     "date-fns": "^2.29.3",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
