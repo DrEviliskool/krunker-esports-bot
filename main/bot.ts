@@ -415,5 +415,6 @@ client2.on('ready', () => {
 
 
 
-client2.login(process.env.BOT_TOKEN_GPT)
 
+
+client2.login(process.env.BOT_TOKEN_GPT)
