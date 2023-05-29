@@ -71,16 +71,7 @@ export const redisClient = redis.createClient({
   }
 });
 
-
-redisClient.on('error', (err) => {
-  console.log(`REDDIS ERROR:\n\n${err}`)
-})
 async function redisOn() {
-
-  redisClient.connect().then(() => {
-    console.log('Redis Client is ready!')
-  })
-
   setTimeout(() => {
 
     redisClient.quit().then(async () => {
@@ -89,6 +80,8 @@ async function redisOn() {
         console.log('Redis Client has been refreshed!')
       })
 
+    }).then(() => {
+      redisOn()
     })
 
   }, 1000 * 60 * 60);
@@ -97,7 +90,18 @@ async function redisOn() {
 
 }
 
-redisOn()
+
+redisClient.on('error', (err) => {
+  console.log(`REDDIS ERROR:\n\n${err}`)
+})
+
+redisClient.connect().then(() => {
+  console.log('Redis Client is ready!')
+}).then(() => {
+  redisOn()
+})
+
+
 
 
 async function thesubscriber() {
