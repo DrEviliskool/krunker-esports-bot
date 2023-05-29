@@ -36,9 +36,9 @@ process.on('unhandledRejection', (err) => {
 
 function ratelimit_handler(req) {
   if (req.method === 'PATCH' && req.route === '/channels/:id') {
-      return true;
+    return true;
   } else {
-      return false;
+    return false;
   }
 }
 
@@ -296,51 +296,105 @@ const client2 = new Client({
 
 client2.on('messageCreate', async (msg) => {
 
-  const args = msg.content.slice(prefix.length).trim().split(/ +/);
+  let args = msg.content.slice("!!".length).trim().split(/ +/) as any
+
+  if (!args) {
+    args = "what is openai in 30 words"
+  }
   const command = args.shift()?.toLowerCase()
 
   async function chatgptbot() {
-
-
-    const loadingms = await msg.channel.send(`${msg.author}\n\nPlease wait ...`)
-
     const importDynamic = new Function('modulePath', 'return import(modulePath)')
     const { ChatGPTAPI } = await importDynamic('@twinklepkg/chatgpt')
 
+
     const api = new ChatGPTAPI({ apiKey: process.env.API_KEY, }) as ChatGPTAPI
 
-    const res = await api.sendMessage('What is openai in 250 words!', {
 
-      onProgress(partialResponse) {
-        setTimeout(() => {
-          loadingms.edit(partialResponse.text)
-        }, 1000 * 5);
+    const loadingms = await msg.channel.send(`${msg.author}\n\nPlease wait ...`)
+    let res = await api.sendMessage(args.join(" "))
+    loadingms.edit(`${msg.author}\n\n${res.text}`)
 
-      },
 
-    }
 
-    )
 
-    loadingms.edit(`${res.text}`)
+
+
+
+    const filter = m => m.author.id === msg.author.id
+
+
+    let msg2 = await msg.channel.send('Any other questions? Type n/no if not. (Closing in 25 seconds)')
+
+    msg2.channel.awaitMessages({ filter: filter, max: 1, time: 25000, errors: ["time"] }).then(async messages => {
+
+      let themessage = messages.first()?.content.toLowerCase()
+
+      if (themessage === "n" || themessage === "no") {
+        return msg2.edit('ChatGPT session **closed** <a:check:1112747349819797525>')
+      } else {
+
+        let newmessage = await msg.channel.send(`${msg.author}\n\nPlease wait ...`)
+
+
+        res = await api.sendMessage(themessage!, {
+          conversationId: res.conversationId,
+          parentMessageId: res.id,
+        })
+
+        async function secondchatgpt() {
+
+          let msg3 = await msg.channel.send('Any other questions? Type n/no if not. (Closing in 25 seconds)')
+
+          msg3.channel.awaitMessages({ filter: filter, max: 1, time: 25000, errors: ["time"] }).then(async messages => {
+
+            let okaymsg = messages.first()?.content.toLowerCase()
+
+            if (okaymsg === "n" || okaymsg === "no") {
+              return msg3.edit('ChatGPT session **closed** <a:check:1112747349819797525>')
+            } else {
+              let newsecondmsg = await msg.channel.send(`${msg.author}\n\nPlease wait ...`)
+
+              res = await api.sendMessage(okaymsg!, {
+                conversationId: res.conversationId,
+                parentMessageId: res.id,
+
+              })
+
+              newsecondmsg.edit(`${msg.author}\n\n${res.text}`).then(() => {
+                secondchatgpt()
+              })
+
+            }
+
+
+          }).catch(err => {
+            msg3.edit('ChatGPT session **closed** <a:check:1112747349819797525>')
+          })
+
+        }
+
+        newmessage.edit(`${msg.author}\n\n${res.text}`).then(() => {
+          secondchatgpt()
+        })
+
+      }
+
+
+
+
+    }).catch(err => {
+      msg2.edit('ChatGPT session **closed** <a:check:1112747349819797525>')
+    })
+
 
   }
-
-
-
-
 
 
   switch (command) {
     case 'chatgpt':
       chatgptbot()
   }
-
-
-
-
-
-
 
 })
 
