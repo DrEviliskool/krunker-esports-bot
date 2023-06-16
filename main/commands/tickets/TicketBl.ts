@@ -23,7 +23,7 @@ export const TicketBl = async (msg: Message, args: string[]) => {
         return;
     }
 
-    const blacklistedrole = msg.guild?.roles.cache.find((role) => role.id === '1101887444703527002'); //CAN CHANGE
+    const blacklistedrole = msg.guild?.roles.cache.find((role) => role.id === '1117769557847842966'); //CAN CHANGE
     const member = msg.guild?.members.cache.get(player.id);
 
     if (!blacklistedrole || !member) return;

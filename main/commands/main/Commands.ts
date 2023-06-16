@@ -1,5 +1,4 @@
 import { AllTourneys } from "./AllTourneys"
-import { CloseTic } from "../tickets/CloseTic"
 import { CompBan } from "./CompBan"
 import { CompUnban } from "./CompUnban"
 import { DelCategory } from "./DelCategory"
@@ -9,9 +8,9 @@ import { NewTeamAll } from "./NewTeamAll"
 import { NewTic } from "../tickets/NewTic"
 import { TicketBl } from "../tickets/TicketBl"
 import { delmsg } from "./delmsg"
-import { ArchTic } from "../tickets/ArchTic"
-import { DelTic } from "../tickets/DelTic"
-import { Opentic } from "../tickets/OpenTic"
+import { AppealText } from "../tickets/AppealText"
+import { ticrules } from "../tickets/ticrules"
+
 
 export {
   NewTeamAll,
@@ -23,10 +22,7 @@ export {
   CompUnban,
   delmsg,
   NewTic,
-  CloseTic,
   TicketBl,
-  ArchTic,
-  DelTic,
-  Opentic,
-
+  AppealText,
+  ticrules,
 }
