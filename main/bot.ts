@@ -294,7 +294,7 @@ client.on('interactionCreate', async (interaction) => {
           time: 300000,
           filter: i => i.user.id === interaction.user.id
         }).catch(error => {
-          interaction.followUp({ content: `An error occured ... Please try again` })
+          submitted.reply({ content: `An error occured with your submission ... Please try again\n\nIf it doesn't work again please dm <@937071829410000987>`, ephemeral: true })
           return
         }) as ModalSubmitInteraction<CacheType>
 
