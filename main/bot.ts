@@ -235,12 +235,11 @@ client.on('interactionCreate', async (interaction) => {
 
     const krunkerign = interaction.fields.getTextInputValue("krunkerign12")
     const banreason = interaction.fields.getTextInputValue("banreason12")
-    const banner = interaction.fields.getTextInputValue("banner12")
     const unbanreason = interaction.fields.getTextInputValue("unbanreason12")
-    const olddcname = interaction.fields.getTextInputValue("dcname12")
     const region = interaction.fields.getTextInputValue("region12")
-    const tagged = interaction.fields.getTextInputValue("taggedorno12")
-
+    const whereban = interaction.fields.getTextInputValue("banner12")
+    
+    
     const userchannel = await client.channels.cache.find(channell => channell.type === ChannelType.GuildText && channell.name === `${interaction.user.id}` && channell.parent?.id === openedticketscateogry.id) as TextChannel
     const everyone = await appealserver?.roles.cache.find(r => r.name === '@everyone')
 
@@ -282,49 +281,15 @@ client.on('interactionCreate', async (interaction) => {
           .addFields(
             { name: `Krunker in game name:`, value: `${krunkerign}` },
             { name: `Reason for the comp ban:`, value: `${banreason}` },
-            { name: `Why should you get unbanned:`, value: `${unbanreason}` },
-            { name: `If known, who banned you:`, value: `${banner}` },
-            { name: `What was your discord name once you were banned?`, value: `${olddcname}` },
+            { name: `Why should you get unbanned?`, value: `${unbanreason}` },
             { name: `What's your region?`, value: `${region}` },
-            { name: `Are you currently tagged?`, value: `${tagged}` },
+            { name: `What server were you banned from?`, value: `${whereban}` },
+            
           )
           .setColor("#ffdc3a")
           .setTimestamp()
 
-        const select = new StringSelectMenuBuilder()
-          .setCustomId("select12")
-          .setPlaceholder("Select which server are you banned in.")
-          .setMinValues(1)
-          .addOptions(
-            new StringSelectMenuOptionBuilder()
-              .setValue("KPC")
-              .setLabel("KPC")
-              .setDescription("Krunker Pro Circuit")
-              .setEmoji("<:KPC:1094280007603470446>"),
-
-            new StringSelectMenuOptionBuilder()
-              .setValue("NACK")
-              .setLabel("NACK")
-              .setDescription("North America Competitve Krunker")
-              .setEmoji("<:NACK_RED:1037478615136342127>"),
-
-            new StringSelectMenuOptionBuilder()
-              .setValue("CKA")
-              .setLabel("CKA")
-              .setDescription("Competitive Krunker Asia")
-              .setEmoji('<:cka:835536118161604658>'),
-
-            new StringSelectMenuOptionBuilder()
-              .setValue("Multiple")
-              .setLabel("Multiple")
-              .setDescription("In 2 or more servers")
-              .setEmoji('<:KrunkerEsports:1103733400109588571>')
-          )
-
-        const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select)
-
           ; (await newchan.send({ content: `${interaction.user}`, embeds: [embed], components: [closeticrow] })).pin()
-          ; (await newchan.send({ components: [row] }))
 
       })
 
@@ -411,41 +376,26 @@ client.on('interactionCreate', async (interaction) => {
           .setStyle(TextInputStyle.Paragraph)
           .setPlaceholder("Write why you should be unbanned here.")
           .setRequired(true);
-        const banner = new TextInputBuilder()
-          .setCustomId("banner12")
-          .setLabel("Who banned you? (Type none if unknown)")
-          .setStyle(TextInputStyle.Short)
-          .setMinLength(4)
-          .setPlaceholder("Write here who banned you.")
-          .setRequired(true);
-        const dcname = new TextInputBuilder()
-          .setCustomId("dcname12")
-          .setLabel("your discord name once ")
-          .setStyle(TextInputStyle.Short)
-          .setMinLength(1)
-          .setPlaceholder("Write here your discord name once you were banned.");
         const region = new TextInputBuilder()
           .setCustomId("region12")
           .setLabel("What's your region? (EU/NA/ASIA)")
           .setStyle(TextInputStyle.Short)
           .setMinLength(2)
-          .setPlaceholder("Write here your region.")
-        const tagged = new TextInputBuilder()
-          .setCustomId("taggedorno12")
-          .setLabel("Are you currently tagged? (Yes/No)")
+          .setPlaceholder("Write here your region.");
+        const banner = new TextInputBuilder()
+          .setCustomId("banner12")
+          .setLabel("What server were you banned from (ALL or KPC/NACK/APAC)?")
           .setStyle(TextInputStyle.Short)
           .setMinLength(2)
-          .setPlaceholder("Write here yes or no.")
+          .setPlaceholder("Write here which server were you banned from.");
 
         const actionrow1 = new ActionRowBuilder<TextInputBuilder>().addComponents(krunkerign);
         const actionrow2 = new ActionRowBuilder<TextInputBuilder>().addComponents(banreason);
         const actionrow3 = new ActionRowBuilder<TextInputBuilder>().addComponents(unbanreason);
         const actionrow4 = new ActionRowBuilder<TextInputBuilder>().addComponents(banner);
-        const actionrow5 = new ActionRowBuilder<TextInputBuilder>().addComponents(dcname);
-        const actionrow6 = new ActionRowBuilder<TextInputBuilder>().addComponents(region);
-        const actionrow7 = new ActionRowBuilder<TextInputBuilder>().addComponents(tagged);
+        const actionrow5 = new ActionRowBuilder<TextInputBuilder>().addComponents(region);
 
-        modal.addComponents(actionrow1, actionrow2, actionrow3, actionrow4, actionrow5, actionrow6, actionrow7,)
+        modal.addComponents(actionrow1, actionrow2, actionrow3, actionrow4, actionrow5,)
 
         interaction.showModal(modal)
 
