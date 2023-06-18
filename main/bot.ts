@@ -535,6 +535,10 @@ client.on('interactionCreate', async (interaction) => {
               .setColor("#ffdc3a")
               .setTimestamp();
 
+            appealer.send({ embeds: [unbanembed] }).catch((err) => {
+              logger.send(`Couldn't dm **${appealer.tag}**`)
+            })
+
           }, 1000 * 2);
 
 
