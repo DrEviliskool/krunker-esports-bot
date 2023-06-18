@@ -384,7 +384,7 @@ client.on('interactionCreate', async (interaction) => {
           .setPlaceholder("Write here your region.");
         const banner = new TextInputBuilder()
           .setCustomId("banner12")
-          .setLabel("What server were you banned from (ALL or KPC/NACK/APAC)?")
+          .setLabel("What server were you banned from?")
           .setStyle(TextInputStyle.Short)
           .setMinLength(2)
           .setPlaceholder("Write here which server were you banned from.");
