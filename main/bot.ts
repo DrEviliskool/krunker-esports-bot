@@ -264,7 +264,7 @@ client.on('interactionCreate', async (interaction) => {
         ]
       }).then(async (newchan) => {
 
-        interaction.followUp({ content: `Ticket has been created <#${newchan.id}>`, ephemeral: true })
+        interaction.reply({ content: `Ticket has been created <#${newchan.id}>`, ephemeral: true })
 
         const embedtwo = new EmbedBuilder()
           .setAuthor({ name: `${interaction.user.tag} (${interaction.user.id})`, iconURL: interaction.user.displayAvatarURL() })
@@ -282,8 +282,8 @@ client.on('interactionCreate', async (interaction) => {
             { name: `Krunker in game name:`, value: `${krunkerign}` },
             { name: `Reason for the comp ban:`, value: `${banreason}` },
             { name: `Why should you get unbanned?`, value: `${unbanreason}` },
-            { name: `What's your region?`, value: `${region}` },
             { name: `What server were you banned from?`, value: `${whereban}` },
+            { name: `What's your region?`, value: `${region}` },
             
           )
           .setColor("#ffdc3a")
