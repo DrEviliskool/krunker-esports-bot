@@ -201,6 +201,139 @@ client.on('interactionCreate', async (interaction) => {
   const ticklogs = client.channels.cache.find(channell => channell.type === ChannelType.GuildText && channell.id === "1117754445183320115") as TextChannel
   const blacklistedrole = appealserver?.roles.cache.find(role => role.id === '1117769557847842966'); //CAN CHANGE
 
+  const closeticrow = new ActionRowBuilder().addComponents(
+
+    new ButtonBuilder()
+      .setCustomId('accepttic12')
+      .setLabel("Accept Appeal")
+      .setEmoji("✅")
+      .setStyle(ButtonStyle.Success),
+
+    new ButtonBuilder()
+      .setCustomId('denytic12')
+      .setLabel("Deny Appeal")
+      .setEmoji("❎")
+      .setStyle(ButtonStyle.Danger),
+
+  ) as ActionRowBuilder<ButtonBuilder>
+
+  const openticrow = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId('opentic12')
+      .setLabel("Open ticket")
+      .setStyle(ButtonStyle.Success)
+      .setEmoji('🔓'),
+
+    new ButtonBuilder()
+      .setCustomId('deltic12')
+      .setLabel("Delete ticket")
+      .setStyle(ButtonStyle.Danger)
+      .setEmoji('🔓'),
+  ) as ActionRowBuilder<ButtonBuilder>
+
+  if (interaction.isModalSubmit()) {
+
+    const krunkerign = interaction.fields.getTextInputValue("krunkerign12")
+    const banreason = interaction.fields.getTextInputValue("banreason12")
+    const banner = interaction.fields.getTextInputValue("banner12")
+    const unbanreason = interaction.fields.getTextInputValue("unbanreason12")
+    const olddcname = interaction.fields.getTextInputValue("dcname12")
+    const region = interaction.fields.getTextInputValue("region12")
+    const tagged = interaction.fields.getTextInputValue("taggedorno12")
+
+    const userchannel = await client.channels.cache.find(channell => channell.type === ChannelType.GuildText && channell.name === `${interaction.user.id}` && channell.parent?.id === openedticketscateogry.id) as TextChannel
+    const everyone = await appealserver?.roles.cache.find(r => r.name === '@everyone')
+
+    if (!userchannel) {
+
+      appealserver?.channels.create({
+
+        name: `${interaction.user.id}`,
+        type: ChannelType.GuildText,
+        parent: openedticketscateogry,
+        permissionOverwrites: [
+          {
+            id: everyone!.id,
+            deny: PermissionsBitField.Flags.ViewChannel
+          },
+
+          {
+            id: theinteractor.id,
+            allow: customrolepermissions
+          }
+
+        ]
+      }).then(async (newchan) => {
+
+        interaction.followUp({ content: `Ticket has been created <#${newchan.id}>`, ephemeral: true })
+
+        const embedtwo = new EmbedBuilder()
+          .setAuthor({ name: `${interaction.user.tag} (${interaction.user.id})`, iconURL: interaction.user.displayAvatarURL() })
+          .setColor("Green")
+          .setTimestamp()
+          .setTitle(`Created a ticket (<#${newchan.id}>)`)
+
+        ticklogs.send({ embeds: [embedtwo] })
+
+
+        const embed = new EmbedBuilder()
+          .setTitle('Welcome!')
+          .setDescription('Support will review your appeal soon! If you have any more information, feel free to provide it here.')
+          .addFields(
+            { name: `Krunker in game name:`, value: `${krunkerign}` },
+            { name: `Reason for the comp ban:`, value: `${banreason}` },
+            { name: `Why should you get unbanned:`, value: `${unbanreason}` },
+            { name: `If known, who banned you:`, value: `${banner}` },
+            { name: `What was your discord name once you were banned?`, value: `${olddcname}` },
+            { name: `What's your region?`, value: `${region}` },
+            { name: `Are you currently tagged?`, value: `${tagged}` },
+          )
+          .setColor("#ffdc3a")
+          .setTimestamp()
+
+        const select = new StringSelectMenuBuilder()
+          .setCustomId("select12")
+          .setPlaceholder("Select which server are you banned in.")
+          .setMinValues(1)
+          .addOptions(
+            new StringSelectMenuOptionBuilder()
+              .setValue("KPC")
+              .setLabel("KPC")
+              .setDescription("Krunker Pro Circuit")
+              .setEmoji("<:KPC:1094280007603470446>"),
+
+            new StringSelectMenuOptionBuilder()
+              .setValue("NACK")
+              .setLabel("NACK")
+              .setDescription("North America Competitve Krunker")
+              .setEmoji("<:NACK_RED:1037478615136342127>"),
+
+            new StringSelectMenuOptionBuilder()
+              .setValue("CKA")
+              .setLabel("CKA")
+              .setDescription("Competitive Krunker Asia")
+              .setEmoji('<:cka:835536118161604658>'),
+
+            new StringSelectMenuOptionBuilder()
+              .setValue("Multiple")
+              .setLabel("Multiple")
+              .setDescription("In 2 or more servers")
+              .setEmoji('<:KrunkerEsports:1103733400109588571>')
+          )
+
+        const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select)
+
+          ; (await newchan.send({ content: `${interaction.user}`, embeds: [embed], components: [closeticrow] })).pin()
+          ; (await newchan.send({ components: [row] }))
+
+      })
+
+
+    } else {
+      interaction.followUp({ content: `You already have a ticket opened (<#${userchannel.id}>)`, ephemeral: true })
+    }
+  }
+
   if (interaction.isAnySelectMenu()) {
     let ok = ""
     let another = ""
@@ -234,38 +367,7 @@ client.on('interactionCreate', async (interaction) => {
   }
 
 
-
   if (interaction.isButton()) {
-
-    const closeticrow = new ActionRowBuilder().addComponents(
-
-      new ButtonBuilder()
-        .setCustomId('accepttic12')
-        .setLabel("Accept Appeal")
-        .setEmoji("✅")
-        .setStyle(ButtonStyle.Success),
-
-      new ButtonBuilder()
-        .setCustomId('denytic12')
-        .setLabel("Deny Appeal")
-        .setEmoji("❎")
-        .setStyle(ButtonStyle.Danger),
-
-    ) as ActionRowBuilder<ButtonBuilder>
-
-    const openticrow = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId('opentic12')
-        .setLabel("Open ticket")
-        .setStyle(ButtonStyle.Success)
-        .setEmoji('🔓'),
-
-      new ButtonBuilder()
-        .setCustomId('deltic12')
-        .setLabel("Delete ticket")
-        .setStyle(ButtonStyle.Danger)
-        .setEmoji('🔓'),
-    ) as ActionRowBuilder<ButtonBuilder>
 
 
     if (theinteractor.roles.cache.has(blacklistedrole?.id!)) {
@@ -347,116 +449,20 @@ client.on('interactionCreate', async (interaction) => {
 
         interaction.showModal(modal)
 
-        const submitted = await interaction.awaitModalSubmit({
-          time: 300000,
-          filter: i => i.user.id === interaction.user.id
-        }).catch(error => {
-          submitted.reply({ content: `An error occured with your submission ... Please try again\n\nIf it doesn't work again please dm <@937071829410000987>`, ephemeral: true })
-          return
-        }) as ModalSubmitInteraction<CacheType>
-
-        if (submitted) {
-
-          const krunkerign = submitted.fields.getTextInputValue("krunkerign12")
-          const banreason = submitted.fields.getTextInputValue("banreason12")
-          const banner = submitted.fields.getTextInputValue("banner12")
-          let unbanreason = submitted.fields.getTextInputValue("unbanreason12")
-          if (!unbanreason) unbanreason = "Unknown"
-          const olddcname = submitted.fields.getTextInputValue("dcname12")
-          const region = submitted.fields.getTextInputValue("region12")
-          const tagged = submitted.fields.getTextInputValue("taggedorno12")
-
-          const userchannel = await client.channels.cache.find(channell => channell.type === ChannelType.GuildText && channell.name === `${interaction.user.id}` && channell.parent?.id === openedticketscateogry.id) as TextChannel
-          const everyone = await appealserver?.roles.cache.find(r => r.name === '@everyone')
-
-          if (!userchannel) {
-
-            appealserver?.channels.create({
-
-              name: `${interaction.user.id}`,
-              type: ChannelType.GuildText,
-              parent: openedticketscateogry,
-              permissionOverwrites: [
-                {
-                  id: everyone!.id,
-                  deny: PermissionsBitField.Flags.ViewChannel
-                },
-
-                {
-                  id: theinteractor.id,
-                  allow: customrolepermissions
-                }
-
-              ]
-            }).then(async (newchan) => {
-
-              submitted.reply({ content: `Ticket has been created <#${newchan.id}>`, ephemeral: true })
-
-              const embedtwo = new EmbedBuilder()
-                .setAuthor({ name: `${interaction.user.tag} (${interaction.user.id})`, iconURL: interaction.user.displayAvatarURL() })
-                .setColor("Green")
-                .setTimestamp()
-                .setTitle(`Created a ticket (<#${newchan.id}>)`)
-
-              ticklogs.send({ embeds: [embedtwo] })
+        // const submitted = await interaction.awaitModalSubmit({
+        //   time: 300000,
+        //   filter: i => i.user.id === interaction.user.id
+        // }).catch(error => {
+        //   submitted.reply({ content: `An error occured with your submission ... Please try again\n\nIf it doesn't work again please dm <@937071829410000987>`, ephemeral: true })
+        //   return
+        // }) as ModalSubmitInteraction<CacheType>
 
 
-              const embed = new EmbedBuilder()
-                .setTitle('Welcome!')
-                .setDescription('Support will review your appeal soon! If you have any more information, feel free to provide it here.')
-                .addFields(
-                  { name: `Krunker in game name:`, value: `${krunkerign}` },
-                  { name: `Reason for the comp ban:`, value: `${banreason}` },
-                  { name: `Why should you get unbanned:`, value: `${unbanreason}` },
-                  { name: `If known, who banned you:`, value: `${banner}` },
-                  { name: `What was your discord name once you were banned?`, value: `${olddcname}` },
-                  { name: `What's your region?`, value: `${region}` },
-                  { name: `Are you currently tagged?`, value: `${tagged}` },
-                )
-                .setColor("#ffdc3a")
-                .setTimestamp()
-
-              const select = new StringSelectMenuBuilder()
-                .setCustomId("select12")
-                .setPlaceholder("Select which server are you banned in.")
-                .setMinValues(1)
-                .addOptions(
-                  new StringSelectMenuOptionBuilder()
-                    .setValue("KPC")
-                    .setLabel("KPC")
-                    .setDescription("Krunker Pro Circuit")
-                    .setEmoji("<:KPC:1094280007603470446>"),
-
-                  new StringSelectMenuOptionBuilder()
-                    .setValue("NACK")
-                    .setLabel("NACK")
-                    .setDescription("North America Competitve Krunker")
-                    .setEmoji("<:NACK_RED:1037478615136342127>"),
-
-                  new StringSelectMenuOptionBuilder()
-                    .setValue("CKA")
-                    .setLabel("CKA")
-                    .setDescription("Competitive Krunker Asia")
-                    .setEmoji('<:cka:835536118161604658>'),
-
-                  new StringSelectMenuOptionBuilder()
-                    .setValue("Multiple")
-                    .setLabel("Multiple")
-                    .setDescription("In 2 or more servers")
-                    .setEmoji('<:KrunkerEsports:1103733400109588571>')
-                )
-
-              const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select)
-
-                ; (await newchan.send({ content: `${interaction.user}`, embeds: [embed], components: [closeticrow] })).pin()
-                ; (await newchan.send({ components: [row] }))
-
-            })
 
 
-          } else {
-            interaction.followUp({ content: `You already have a ticket opened (<#${userchannel.id}>)`, ephemeral: true })
-          }
+        if (1 + 1) {
+
+          // 
 
         } else {
           interaction.followUp({ content: `Error occured with your submission ... Please try again`, ephemeral: true })
@@ -628,7 +634,7 @@ client.on('interactionCreate', async (interaction) => {
         }
 
 
-      } 
+      }
 
     }
 
