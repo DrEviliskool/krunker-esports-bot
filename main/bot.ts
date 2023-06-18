@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ActivityType, AnyComponentBuilder, ButtonBuilder, ButtonStyle, CacheType, CategoryChannel, ChannelType, Client, EmbedBuilder, GatewayIntentBits, GuildMember, Message, ModalBuilder, ModalSubmitInteraction, PermissionsBitField, StringSelectMenuBuilder, TextChannel, TextInputBuilder, TextInputStyle, User } from 'discord.js'
+import { ActionRowBuilder, ActivityType, AnyComponentBuilder, ButtonBuilder, ButtonStyle, CacheType, CategoryChannel, ChannelType, Client, EmbedBuilder, GatewayIntentBits, GuildMember, Message, ModalBuilder, ModalSubmitInteraction, PermissionsBitField, SelectMenuBuilder, StringSelectMenuBuilder, StringSelectMenuComponent, StringSelectMenuOptionBuilder, TextChannel, TextInputBuilder, TextInputStyle, User } from 'discord.js'
 import dotenv from 'dotenv';
 import * as redis from "redis"
 import { HumanizeDurationLanguage, HumanizeDuration } from 'humanize-duration-ts';
@@ -143,7 +143,11 @@ async function thesubscriber() {
 
       serverarray.forEach(server => {
         client.guilds.fetch(server).then(async (guild) => {
-          guild.bans.remove(unbanneduser, "Ban expired - Unbanned automatically")
+
+          guild.bans.remove(unbanneduser, "Ban expired - Unbanned automatically").catch((err) => {
+            logger.send(`**${unbanneduser.tag}** already banned in **${guild.name}**`)
+          })
+
         })
       });
 
@@ -196,6 +200,38 @@ client.on('interactionCreate', async (interaction) => {
   const deniedddticcategory = await client.channels.cache.find(channell => channell.type === ChannelType.GuildCategory && channell.id === "1117753934845595698") as CategoryChannel
   const ticklogs = client.channels.cache.find(channell => channell.type === ChannelType.GuildText && channell.id === "1117754445183320115") as TextChannel
   const blacklistedrole = appealserver?.roles.cache.find(role => role.id === '1117769557847842966'); //CAN CHANGE
+
+  if (interaction.isAnySelectMenu()) {
+    let ok = ""
+    let another = ""
+
+    interaction.values.forEach(int => {
+
+      if (int === "KPC") {
+        ok = "<@&1119939626208084019>"
+      } else if (int === "NACK") {
+        ok = "<@&1119939642674913320>"
+      } else if (int === "CKA") {
+        ok = "<@&1119939673834401853>"
+      } else if (int === "Multiple") {
+        ok = "<@&1117740774025592883>"
+      }
+
+    })
+
+    if (ok === "<@&1119939626208084019>") {
+      another = "KPC"
+    } else if (ok === "<@&1119939642674913320>") {
+      another = "NACK"
+    } else if (ok === "<@&1119939673834401853>") {
+      another = "CKA"
+    } else if (ok === "<@&1117740774025592883>") {
+      another = "2 or more comp servers"
+    }
+
+    interaction.message.delete()
+    interaction.channel?.send(`${ok}, user is banned in ${another}`)
+  }
 
 
 
@@ -280,13 +316,34 @@ client.on('interactionCreate', async (interaction) => {
           .setMinLength(4)
           .setPlaceholder("Write here who banned you.")
           .setRequired(true);
+        const dcname = new TextInputBuilder()
+          .setCustomId("dcname12")
+          .setLabel("your discord name once ")
+          .setStyle(TextInputStyle.Short)
+          .setMinLength(1)
+          .setPlaceholder("Write here your discord name once you were banned.");
+        const region = new TextInputBuilder()
+          .setCustomId("region12")
+          .setLabel("What's your region? (EU/NA/ASIA)")
+          .setStyle(TextInputStyle.Short)
+          .setMinLength(2)
+          .setPlaceholder("Write here your region.")
+        const tagged = new TextInputBuilder()
+          .setCustomId("taggedorno12")
+          .setLabel("Are you currently tagged? (Yes/No)")
+          .setStyle(TextInputStyle.Short)
+          .setMinLength(2)
+          .setPlaceholder("Write here yes or no.")
 
         const actionrow1 = new ActionRowBuilder<TextInputBuilder>().addComponents(krunkerign);
         const actionrow2 = new ActionRowBuilder<TextInputBuilder>().addComponents(banreason);
         const actionrow3 = new ActionRowBuilder<TextInputBuilder>().addComponents(unbanreason);
         const actionrow4 = new ActionRowBuilder<TextInputBuilder>().addComponents(banner);
+        const actionrow5 = new ActionRowBuilder<TextInputBuilder>().addComponents(dcname);
+        const actionrow6 = new ActionRowBuilder<TextInputBuilder>().addComponents(region);
+        const actionrow7 = new ActionRowBuilder<TextInputBuilder>().addComponents(tagged);
 
-        await modal.addComponents(actionrow1, actionrow2, actionrow3, actionrow4)
+        await modal.addComponents(actionrow1, actionrow2, actionrow3, actionrow4, actionrow5, actionrow6, actionrow7,)
 
         interaction.showModal(modal)
 
@@ -305,6 +362,9 @@ client.on('interactionCreate', async (interaction) => {
           const banner = submitted.fields.getTextInputValue("banner12")
           let unbanreason = submitted.fields.getTextInputValue("unbanreason12")
           if (!unbanreason) unbanreason = "Unknown"
+          const olddcname = submitted.fields.getTextInputValue("dcname12")
+          const region = submitted.fields.getTextInputValue("region12")
+          const tagged = submitted.fields.getTextInputValue("taggedorno12")
 
           const userchannel = await client.channels.cache.find(channell => channell.type === ChannelType.GuildText && channell.name === `${interaction.user.id}` && channell.parent?.id === openedticketscateogry.id) as TextChannel
           const everyone = await appealserver?.roles.cache.find(r => r.name === '@everyone')
@@ -349,23 +409,57 @@ client.on('interactionCreate', async (interaction) => {
                   { name: `Reason for the comp ban:`, value: `${banreason}` },
                   { name: `Why should you get unbanned:`, value: `${unbanreason}` },
                   { name: `If known, who banned you:`, value: `${banner}` },
+                  { name: `What was your discord name once you were banned?`, value: `${olddcname}` },
+                  { name: `What's your region?`, value: `${region}` },
+                  { name: `Are you currently tagged?`, value: `${tagged}` },
                 )
                 .setColor("#ffdc3a")
                 .setTimestamp()
 
+              const select = new StringSelectMenuBuilder()
+                .setCustomId("select12")
+                .setPlaceholder("Select which server are you banned in.")
+                .setMinValues(1)
+                .addOptions(
+                  new StringSelectMenuOptionBuilder()
+                    .setValue("KPC")
+                    .setLabel("KPC")
+                    .setDescription("Krunker Pro Circuit")
+                    .setEmoji("<:KPC:1094280007603470446>"),
 
+                  new StringSelectMenuOptionBuilder()
+                    .setValue("NACK")
+                    .setLabel("NACK")
+                    .setDescription("North America Competitve Krunker")
+                    .setEmoji("<:NACK_RED:1037478615136342127>"),
 
-                ; (await newchan.send({ content: `${interaction.user}`, embeds: [embed], components: [closeticrow!] })).pin()
+                  new StringSelectMenuOptionBuilder()
+                    .setValue("CKA")
+                    .setLabel("CKA")
+                    .setDescription("Competitive Krunker Asia")
+                    .setEmoji('<:cka:835536118161604658>'),
+
+                  new StringSelectMenuOptionBuilder()
+                    .setValue("Multiple")
+                    .setLabel("Multiple")
+                    .setDescription("In 2 or more servers")
+                    .setEmoji('<:KrunkerEsports:1103733400109588571>')
+                )
+
+              const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select)
+
+                ; (await newchan.send({ content: `${interaction.user}`, embeds: [embed], components: [closeticrow] })).pin()
+                ; (await newchan.send({ components: [row] }))
 
             })
 
 
           } else {
-            submitted.reply({ content: `You already have a ticket opened (<#${userchannel.id}>)`, ephemeral: true })
+            interaction.followUp({ content: `You already have a ticket opened (<#${userchannel.id}>)`, ephemeral: true })
           }
 
         } else {
-          interaction.followUp({ content: `Time for submission is over ... Please try again`, ephemeral: true })
+          interaction.followUp({ content: `Error occured with your submission ... Please try again`, ephemeral: true })
           return
         }
 
@@ -396,20 +490,22 @@ client.on('interactionCreate', async (interaction) => {
 
 
               const unbanembed = new EmbedBuilder()
-              .setTitle('You have been comp unbanned!')
-              .addFields(
-                { name: `Krunker Esports:`, value: `[Click here!](https://discord.gg/9r6SeMQC3s)` },
-                { name: `Krunker Pro Ciruit (EU)`, value: `[Click here!](https://discord.gg/YPjBn5C)` },
-                { name: `NACK (NA)`, value: `[Click here!](https://discord.gg/nJmqWam3tj)` },
-                { name: `Competitive Krunker APAC (SEA/OCE)`, value: `[Click here!](https://discord.gg/bRs2PVzZza)` },
-              )
-              .setColor("#ffdc3a")
-              .setTimestamp();
+                .setTitle('You have been comp unbanned!')
+                .addFields(
+                  { name: `Krunker Esports:`, value: `[Click here!](https://discord.gg/9r6SeMQC3s)` },
+                  { name: `Krunker Pro Ciruit (EU)`, value: `[Click here!](https://discord.gg/YPjBn5C)` },
+                  { name: `NACK (NA)`, value: `[Click here!](https://discord.gg/nJmqWam3tj)` },
+                  { name: `Competitive Krunker APAC (SEA/OCE)`, value: `[Click here!](https://discord.gg/bRs2PVzZza)` },
+                )
+                .setColor("#ffdc3a")
+                .setTimestamp();
 
 
               serverarray.forEach(server => {
                 client.guilds.fetch(server).then(async (guild) => {
-                  guild.bans.remove(appealer, "Unbanned by an accepted appeal")
+                  guild.bans.remove(appealer, "Unbanned by an accepted appeal").catch((err) => {
+                    logger.send(`**${appealer.tag}** already banned in **${guild.name}**`)
+                  })
                 })
               });
 
@@ -417,7 +513,7 @@ client.on('interactionCreate', async (interaction) => {
                 ticklogs.send(`<@937071829410000987> Couldn't dm **${appealer.tag}** for server links. User's dms are closed`)
               })
 
-        
+
             } catch (err) {
               logger.send(`<@937071829410000987> Problem in auto unban - Couldn't unban **${appealer.tag}** in any of the pug servers.`)
             }
@@ -429,15 +525,15 @@ client.on('interactionCreate', async (interaction) => {
             interaction.reply({ content: `Ticket has been closed! Support team controls:`, components: [openticrow!] })
 
             const unbanembed = new EmbedBuilder()
-            .setTitle('You have been comp unbanned!')
-            .addFields(
-              { name: `Krunker Esports:`, value: `[Click here!](https://discord.gg/9r6SeMQC3s)` },
-              { name: `Krunker Pro Ciruit (EU)`, value: `[Click here!](https://discord.gg/YPjBn5C)` },
-              { name: `NACK (NA)`, value: `[Click here!](https://discord.gg/nJmqWam3tj)` },
-              { name: `Competitive Krunker APAC (SEA/OCE)`, value: `[Click here!](https://discord.gg/bRs2PVzZza)` },
-            )
-            .setColor("#ffdc3a")
-            .setTimestamp();
+              .setTitle('You have been comp unbanned!')
+              .addFields(
+                { name: `Krunker Esports:`, value: `[Click here!](https://discord.gg/9r6SeMQC3s)` },
+                { name: `Krunker Pro Ciruit (EU)`, value: `[Click here!](https://discord.gg/YPjBn5C)` },
+                { name: `NACK (NA)`, value: `[Click here!](https://discord.gg/nJmqWam3tj)` },
+                { name: `Competitive Krunker APAC (SEA/OCE)`, value: `[Click here!](https://discord.gg/bRs2PVzZza)` },
+              )
+              .setColor("#ffdc3a")
+              .setTimestamp();
 
           }, 1000 * 2);
 
@@ -521,14 +617,14 @@ client.on('interactionCreate', async (interaction) => {
           ticklogs.send({ embeds: [embedtwo] })
 
           interaction.reply({ content: `Ticket has been closed! Support team controls:`, components: [openticrow!] })
-        
+
         } else {
           interaction.reply({ content: `Ticket must be closed`, ephemeral: true })
           return
         }
 
 
-      }
+      } 
 
     }
 
@@ -619,145 +715,3 @@ client.on('messageCreate', async (msg) => {
 })
 
 client.login(process.env.BOT_TOKEN);
-
-
-
-
-
-
-
-
-
-const client2 = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.GuildBans,
-    GatewayIntentBits.GuildMessageReactions,
-    GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.GuildPresences,
-  ],
-}) as Client
-
-client2.on('messageCreate', async (msg) => {
-
-  let args = msg.content.slice("!!".length).trim().split(/ +/) as any
-
-  if (!args) {
-    args = "what is openai in 30 words"
-  }
-  const command = args.shift()?.toLowerCase()
-
-  async function chatgptbot() {
-    const importDynamic = new Function('modulePath', 'return import(modulePath)')
-    const { ChatGPTAPI } = await importDynamic('@twinklepkg/chatgpt')
-
-
-    const api = new ChatGPTAPI({ apiKey: process.env.API_KEY, }) as ChatGPTAPI
-
-
-    const loadingms = await msg.channel.send(`${msg.author}\n\nPlease wait ...`)
-    let res = await api.sendMessage(args.join(" "))
-    loadingms.edit(`${msg.author}\n\n${res.text}`)
-
-
-
-
-
-
-
-    const filter = m => m.author.id === msg.author.id
-
-
-    let msg2 = await msg.channel.send('Any other questions? Type n/no if not. (Closing in 25 seconds)')
-
-    msg2.channel.awaitMessages({ filter: filter, max: 1, time: 25000, errors: ["time"] }).then(async messages => {
-
-      let themessage = messages.first()?.content.toLowerCase()
-
-      if (themessage === "n" || themessage === "no") {
-        return msg2.edit('ChatGPT session **closed** <a:check:1112747349819797525>')
-      } else {
-
-        let newmessage = await msg.channel.send(`${msg.author}\n\nPlease wait ...`)
-
-
-        res = await api.sendMessage(themessage!, {
-          conversationId: res.conversationId,
-          parentMessageId: res.id,
-        })
-
-        async function secondchatgpt() {
-
-          let msg3 = await msg.channel.send('Any other questions? Type n/no if not. (Closing in 25 seconds)')
-
-          msg3.channel.awaitMessages({ filter: filter, max: 1, time: 25000, errors: ["time"] }).then(async messages => {
-
-            let okaymsg = messages.first()?.content.toLowerCase()
-
-            if (okaymsg === "n" || okaymsg === "no") {
-              return msg3.edit('ChatGPT session **closed** <a:check:1112747349819797525>')
-            } else {
-              let newsecondmsg = await msg.channel.send(`${msg.author}\n\nPlease wait ...`)
-
-              res = await api.sendMessage(okaymsg!, {
-                conversationId: res.conversationId,
-                parentMessageId: res.id,
-
-              })
-
-              newsecondmsg.edit(`${msg.author}\n\n${res.text}`).then(() => {
-                secondchatgpt()
-              })
-
-            }
-
-
-          }).catch(err => {
-            msg3.edit('ChatGPT session **closed** <a:check:1112747349819797525>')
-          })
-
-        }
-
-        newmessage.edit(`${msg.author}\n\n${res.text}`).then(() => {
-          secondchatgpt()
-        })
-
-      }
-
-
-
-
-    }).catch(err => {
-      msg2.edit('ChatGPT session **closed** <a:check:1112747349819797525>')
-    })
-
-
-  }
-
-
-  switch (command) {
-    case 'chatgpt':
-      chatgptbot()
-  }
-
-})
-
-client2.on('ready', () => {
-  console.log(`${client2.user?.tag} is now online`)
-  client2.user?.setPresence({
-    status: "online",
-    activities: [
-      {
-        name: "with Anthropic",
-        type: ActivityType.Competing
-      }
-    ]
-  })
-})
-
-
-
-client2.login(process.env.BOT_TOKEN_GPT)

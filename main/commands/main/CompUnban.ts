@@ -38,7 +38,9 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
         serverarray.forEach(server => {
             client.guilds.fetch(server).then(async (guild) => {
     
-                guild.bans.remove(player, `Unbanned by ${player.tag}`)
+                guild.bans.remove(player, `Unbanned by ${player.tag}`).catch((err) => {
+                    logger.send(`**${player.tag}** already banned in **${guild.name}**`)
+                  })
     
             })
     

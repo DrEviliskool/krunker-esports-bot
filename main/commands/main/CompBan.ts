@@ -148,7 +148,9 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
         serverarray.forEach(async (server) => {
           await client.guilds.fetch(server).then(async (guild) => {
   
-            await guild.bans.create(player, { reason: reason })
+            await guild.bans.create(player, { reason: reason }).catch((err) => {
+              logger.send(`**${player.tag}** already banned in **${guild.name}**`)
+            })
   
           })
         })
@@ -233,7 +235,9 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
       serverarray.forEach(server => {
         client.guilds.fetch(server).then(async guild => {
 
-          guild.bans.create(player, { reason: reason })
+          guild.bans.create(player, { reason: reason }).catch((err) => {
+            logger.send(`**${player.tag}** already banned in **${guild.name}**`)
+          })
 
         })
       })
