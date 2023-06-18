@@ -343,7 +343,7 @@ client.on('interactionCreate', async (interaction) => {
         const actionrow6 = new ActionRowBuilder<TextInputBuilder>().addComponents(region);
         const actionrow7 = new ActionRowBuilder<TextInputBuilder>().addComponents(tagged);
 
-        await modal.addComponents(actionrow1, actionrow2, actionrow3, actionrow4, actionrow5, actionrow6, actionrow7,)
+        modal.addComponents(actionrow1, actionrow2, actionrow3, actionrow4, actionrow5, actionrow6, actionrow7,)
 
         interaction.showModal(modal)
 
