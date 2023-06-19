@@ -238,8 +238,8 @@ client.on('interactionCreate', async (interaction) => {
     const unbanreason = interaction.fields.getTextInputValue("unbanreason12")
     const region = interaction.fields.getTextInputValue("region12")
     const whereban = interaction.fields.getTextInputValue("banner12")
-    
-    
+
+
     const userchannel = await client.channels.cache.find(channell => channell.type === ChannelType.GuildText && channell.name === `${interaction.user.id}` && channell.parent?.id === openedticketscateogry.id) as TextChannel
     const everyone = await appealserver?.roles.cache.find(r => r.name === '@everyone')
 
@@ -284,7 +284,7 @@ client.on('interactionCreate', async (interaction) => {
             { name: `Why should you get unbanned?`, value: `${unbanreason}` },
             { name: `What server were you banned from?`, value: `${whereban}` },
             { name: `What's your region?`, value: `${region}` },
-            
+
           )
           .setColor("#ffdc3a")
           .setTimestamp()

@@ -1,4 +1,4 @@
-import { ButtonStyle, Client, Embed, EmbedBuilder, Message, TextChannel, User } from "discord.js";
+import { ButtonBuilder, ButtonStyle, Client, Embed, EmbedBuilder, Message, TextChannel, User } from "discord.js";
 import { HumanizeDurationLanguage, HumanizeDuration } from 'humanize-duration-ts';
 import { redisClient } from "../../bot";
 import { OWNERS, serverarray } from "../../config";
@@ -24,7 +24,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   const service = new HumanizeDuration(new HumanizeDurationLanguage())
 
   if (args[0] === "view") {
-    const allembeds:any[] = []
+    const allembeds: any[] = []
 
 
     redisClient.sendCommand(['KEYS', '*']).then((keys: any) => {
@@ -44,7 +44,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
           redisClient.ttl(value).then(async (time) => {
 
-            const timeleft = service.humanize(time*1000, { largest: 2 })
+            const timeleft = service.humanize(time * 1000, { largest: 2 })
 
             allembeds.push(
 
@@ -60,7 +60,7 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
                   { name: `Time left:`, value: `${timeleft}`, inline: true },
                 )
 
-              )
+            )
 
           })
         })
@@ -73,32 +73,32 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
       setTimeout(async () => {
 
         await pagination({
-            embeds: allembeds, /** Array of embeds objects */
-            message: msg,
-            author: msg.author,
-            ephemeral: false,
-            time: 80000, /** 80 seconds */
-            disableButtons: true, /** Remove buttons after timeout */
-            fastSkip: false,
-            pageTravel: true,
-            buttons: [
-                {
-                    type: 2,
-                    label: 'Previous Page',
-                    style: ButtonStyle.Primary,
-                    emoji: '◀️'
-                },
-                {
-                    type: 3,
-                    label: 'Next Page',
-                    style: ButtonStyle.Primary,
-                    emoji: '▶️' /** Disable emoji for this button */
-                }
-            ]
-  
+          embeds: allembeds, /** Array of embeds objects */
+          message: msg,
+          author: msg.author,
+          ephemeral: false,
+          time: 80000, /** 80 seconds */
+          disableButtons: true, /** Remove buttons after timeout */
+          fastSkip: false,
+          pageTravel: true,
+          buttons: [
+            {
+              type: 2,
+              label: 'Previous Page',
+              style: ButtonStyle.Primary,
+              emoji: '◀️'
+            },
+            {
+              type: 3,
+              label: 'Next Page',
+              style: ButtonStyle.Primary,
+              emoji: '▶️' /** Disable emoji for this button */
+            }
+          ]
+
         });
-  
-    }, 1000 * 6);
+
+      }, 1000 * 6);
 
 
     })
@@ -109,73 +109,173 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
 
 
     let theplayerid = args[0] as any
-  if (!parseInt(theplayerid) || !theplayerid) return msg.channel.send('Example usage: ?compban **123456789** account sharing')
+    if (!parseInt(theplayerid) || !theplayerid) return msg.channel.send('Example usage: ?compban **123456789** account sharing')
 
-  let player: User
+    let player: User
 
-  try {
-    player = await client.users.fetch(theplayerid!)
-  } catch (err) {
-    logger.send(`**${msg.author.tag}** got an error in **?compban:**\n\nError: **${err}**.`)
-    msg.channel.send('Invalid user **__ID__**.\n\nExample usage: ?compban **123456789** 90d account sharing or ?compban **123456789** Alting (perm).')
-    return
-  }
+    try {
+      player = await client.users.fetch(theplayerid!)
+    } catch (err) {
+      logger.send(`**${msg.author.tag}** got an error in **?compban:**\n\nError: **${err}**.`)
+      msg.channel.send('Invalid user **__ID__**.\n\nExample usage: ?compban **123456789** 90d account sharing or ?compban **123456789** Alting (perm).')
+      return
+    }
 
-  if (!args[1]) return msg.channel.send(`Example usage: ?compban 123456789 90d account sharing or ?compban 123456789 Alting (perm).`)
+    if (!args[1]) return msg.channel.send(`Example usage: ?compban 123456789 90d account sharing or ?compban 123456789 Alting (perm).`)
 
-  const time = leparser(args[1])
-  const seconds = time! / 1000
+    const time = leparser(args[1])
+    const seconds = time! / 1000
 
-  if (!time && args[1]) {
+    if (!time && args[1]) {
 
-    const reason = args.slice(1).join(" ")
+      const reason = args.slice(1).join(" ")
+      const dmembed = new EmbedBuilder()
+        .setDescription(`Hello **${player.tag}**, you have been **permanently** esport banned.\n\nReason: **${reason}.**\n\n`)
+        .setColor("#ffdc3a")
+        .setTimestamp()
+        .setFooter({
+          text: `Anything wrong? Join our appeal server:`
+        })
+      const button = new ButtonBuilder()
+        .setURL("https://discord.gg/fVYUcJYRxq")
+        .setEmoji('<:KrunkerEsports:1103733400109588571>')
+        .setStyle(ButtonStyle.Link) as any;
+
+      player.send({ embeds: [dmembed], components: [button] }).catch(err => {
+        logger.send(`Couldn't dm **${player.tag}**`)
+      })
+
+      setTimeout(async () => {
+
+        try {
+
+          serverarray.forEach(async (server) => {
+            await client.guilds.fetch(server).then(async (guild) => {
+
+              await guild.bans.create(player, { reason: reason }).catch((err) => {
+                logger.send(`**${player.tag}** already banned in **${guild.name}**`)
+              })
+
+            })
+          })
+
+        } catch (err) {
+          msg.channel.send(`Couldn't ban **${player.tag}** in any of the pug servers.`)
+          logger.send(`Couldn't ban **${player.tag}** in any of the pug servers.\n\nError: **${err}**.`)
+          return
+        }
+
+      }, 1000 * 3);
+
+
+
+      const banembed = new EmbedBuilder()
+        .setTitle('New Esport Ban!')
+        .addFields(
+          { name: `Responsible Admin:`, value: `${msg.author.tag} (${msg.author.id})`, inline: true },
+          { name: `Reason:`, value: `${reason}`, inline: true },
+          { name: `Ban duration:`, value: `Permanent`, inline: true },
+
+        )
+        .setThumbnail(
+          (await client.guilds.fetch('623849289403334656')).iconURL()
+        )
+        .setAuthor({ name: `${player.tag} (${player.id})`, iconURL: player.displayAvatarURL() })
+        .setColor('Red')
+        .setTimestamp()
+
+      kpclog.send({ embeds: [banembed] });
+      ncklog.send({ embeds: [banembed] });
+      ckalog.send({ embeds: [banembed] });
+      esport.send({ embeds: [banembed] });
+      admins.send({ embeds: [banembed] })
+
+
+
+
+      const currentchanneldoneemebed = new EmbedBuilder()
+        .setTitle('Successfully done!')
+        .setDescription(`**${player.tag}** has been **permanently** esport banned.\n\nReason: **${reason}**.`)
+        .setColor("#ffdc3a")
+        .setTimestamp();
+
+      msg.channel.send({ embeds: [currentchanneldoneemebed] })
+      return
+    } //end
+
+
+
+    const prettytime = service.humanize(time!, { largest: 2 })
+    const reason = args.slice(2).join(" ")
+    if (!reason) return msg.channel.send('Example usage: ?compban 123456789 90d **Account sharing**')
+    if (!player || !time || !reason) return msg.channel.send('Example usage: ?compban 123456789 90d Account sharing')
+    const rediskey = `banned-${player.id}`
+
+    if (seconds > 0) {
+
+      redisClient.set(rediskey, `${reason}`, { EX: seconds }).catch(ok => {
+        logger.send(`Error in redisClient.set:\n\nError: **${ok}**.`)
+      })
+
+
+    }
+
     const dmembed = new EmbedBuilder()
-      .setDescription(`Hello **${player.tag}**, you have been **permanently** esport banned.\n\nReason: **${reason}.**`)
+      .setDescription(`Hello **${player.tag}**, you have been esport banned for **${prettytime}**.\n\nReason: **${reason}**.`)
       .setColor("#ffdc3a")
       .setTimestamp()
       .setFooter({
-        text: `Anything wrong? DM any of the following: Asokra#8181 -  DrEvil | 精英#0581 - wingman#7163`
+        text: `Anything wrong? Join our appeal server:`
       })
+    const button = new ButtonBuilder()
+      .setURL("https://discord.gg/fVYUcJYRxq")
+      .setEmoji('<:KrunkerEsports:1103733400109588571>')
+      .setStyle(ButtonStyle.Link) as any;
 
-    player.send({ embeds: [dmembed] }).catch(err => {
+    player.send({ embeds: [dmembed], components: [button] }).catch(err => {
       logger.send(`Couldn't dm **${player.tag}**`)
     })
 
-    setTimeout(async () => {
+    setTimeout(() => {
 
       try {
 
-        serverarray.forEach(async (server) => {
-          await client.guilds.fetch(server).then(async (guild) => {
-  
-            await guild.bans.create(player, { reason: reason }).catch((err) => {
+        serverarray.forEach(server => {
+          client.guilds.fetch(server).then(async guild => {
+
+            guild.bans.create(player, { reason: reason }).catch((err) => {
               logger.send(`**${player.tag}** already banned in **${guild.name}**`)
             })
-  
+
           })
         })
-  
+
+
       } catch (err) {
         msg.channel.send(`Couldn't ban **${player.tag}** in any of the pug servers.`)
         logger.send(`Couldn't ban **${player.tag}** in any of the pug servers.\n\nError: **${err}**.`)
         return
       }
-      
+
     }, 1000 * 3);
 
 
+
+
+
+    let thetime = addSeconds(Date.now(), seconds)
+    const realtime = Math.floor(thetime.getTime() / 1000)
 
     const banembed = new EmbedBuilder()
       .setTitle('New Esport Ban!')
       .addFields(
         { name: `Responsible Admin:`, value: `${msg.author.tag} (${msg.author.id})`, inline: true },
         { name: `Reason:`, value: `${reason}`, inline: true },
-        { name: `Ban duration:`, value: `Permanent`, inline: true },
+        { name: `Ban duration:`, value: `${prettytime}`, inline: true },
+        { name: `Time:`, value: `<t:${realtime}:R>` }
 
       )
-      .setThumbnail(
-        (await client.guilds.fetch('623849289403334656')).iconURL()
-      )
+      .setThumbnail((await client.guilds.fetch('623849289403334656')).iconURL())
       .setAuthor({ name: `${player.tag} (${player.id})`, iconURL: player.displayAvatarURL() })
       .setColor('Red')
       .setTimestamp()
@@ -186,105 +286,13 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     esport.send({ embeds: [banembed] });
     admins.send({ embeds: [banembed] })
 
-
-
-
     const currentchanneldoneemebed = new EmbedBuilder()
       .setTitle('Successfully done!')
-      .setDescription(`**${player.tag}** has been **permanently** esport banned.\n\nReason: **${reason}**.`)
+      .setDescription(`**${player.tag}** has been esport banned for **${prettytime}**.\n\nReason: **${reason}**`)
       .setColor("#ffdc3a")
       .setTimestamp();
 
     msg.channel.send({ embeds: [currentchanneldoneemebed] })
-    return
-  } //end
-
-
-
-  const prettytime = service.humanize(time!, { largest: 2 })
-  const reason = args.slice(2).join(" ")
-  if (!reason) return msg.channel.send('Example usage: ?compban 123456789 90d **Account sharing**')
-  if (!player || !time || !reason) return msg.channel.send('Example usage: ?compban 123456789 90d Account sharing')
-  const rediskey = `banned-${player.id}`
-
-  if (seconds > 0) {
-
-    redisClient.set(rediskey, `${reason}`, { EX: seconds }).catch(ok => {
-      logger.send(`Error in redisClient.set:\n\nError: **${ok}**.`)
-    })
-
-
-  }
-
-  const dmembed = new EmbedBuilder()
-    .setDescription(`Hello **${player.tag}**, you have been esport banned for **${prettytime}**.\n\nReason: **${reason}**.`)
-    .setColor("#ffdc3a")
-    .setTimestamp()
-    .setFooter({
-      text: `Anything wrong? DM any of the following: Asokra#8181 -  DrEvil | 精英#0581 - wingman#7163`
-    })
-
-  player.send({ embeds: [dmembed] }).catch(err => {
-    logger.send(`Couldn't dm **${player.tag}**`)
-  })
-
-  setTimeout(() => {
-
-    try {
-
-      serverarray.forEach(server => {
-        client.guilds.fetch(server).then(async guild => {
-
-          guild.bans.create(player, { reason: reason }).catch((err) => {
-            logger.send(`**${player.tag}** already banned in **${guild.name}**`)
-          })
-
-        })
-      })
-
-
-    } catch (err) {
-      msg.channel.send(`Couldn't ban **${player.tag}** in any of the pug servers.`)
-      logger.send(`Couldn't ban **${player.tag}** in any of the pug servers.\n\nError: **${err}**.`)
-      return
-    }
-
-  }, 1000 * 3);
-
-
-
-
-
-  let thetime = addSeconds(Date.now(), seconds)
-  const realtime = Math.floor(thetime.getTime() / 1000)
-
-  const banembed = new EmbedBuilder()
-    .setTitle('New Esport Ban!')
-    .addFields(
-      { name: `Responsible Admin:`, value: `${msg.author.tag} (${msg.author.id})`, inline: true },
-      { name: `Reason:`, value: `${reason}`, inline: true },
-      { name: `Ban duration:`, value: `${prettytime}`, inline: true },
-      { name: `Time:`, value: `<t:${realtime}:R>` }
-
-    )
-    .setThumbnail((await client.guilds.fetch('623849289403334656')).iconURL())
-    .setAuthor({ name: `${player.tag} (${player.id})`, iconURL: player.displayAvatarURL() })
-    .setColor('Red')
-    .setTimestamp()
-
-  kpclog.send({ embeds: [banembed] });
-  ncklog.send({ embeds: [banembed] });
-  ckalog.send({ embeds: [banembed] });
-  esport.send({ embeds: [banembed] });
-  admins.send({ embeds: [banembed] })
-
-  const currentchanneldoneemebed = new EmbedBuilder()
-    .setTitle('Successfully done!')
-    .setDescription(`**${player.tag}** has been esport banned for **${prettytime}**.\n\nReason: **${reason}**`)
-    .setColor("#ffdc3a")
-    .setTimestamp();
-
-  msg.channel.send({ embeds: [currentchanneldoneemebed] })
 
 
   }
