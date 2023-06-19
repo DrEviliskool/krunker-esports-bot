@@ -1,4 +1,4 @@
-import { ButtonBuilder, ButtonStyle, Client, Embed, EmbedBuilder, Message, TextChannel, User } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, Embed, EmbedBuilder, Message, TextChannel, User } from "discord.js";
 import { HumanizeDurationLanguage, HumanizeDuration } from 'humanize-duration-ts';
 import { redisClient } from "../../bot";
 import { OWNERS, serverarray } from "../../config";
@@ -138,10 +138,13 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
         })
       const button = new ButtonBuilder()
         .setURL("https://discord.gg/fVYUcJYRxq")
+        .setLabel("Click here to join our appeal server")
         .setEmoji('<:KrunkerEsports:1103733400109588571>')
-        .setStyle(ButtonStyle.Link) as any;
+        .setStyle(ButtonStyle.Link)
 
-      player.send({ embeds: [dmembed], components: [button] }).catch(err => {
+      const actionrow = new ActionRowBuilder<ButtonBuilder>().addComponents(button)
+
+      player.send({ embeds: [dmembed], components: [actionrow] }).catch(err => {
         logger.send(`Couldn't dm **${player.tag}**`)
       })
 
@@ -229,10 +232,13 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
       })
     const button = new ButtonBuilder()
       .setURL("https://discord.gg/fVYUcJYRxq")
+      .setLabel("Click here to join our appeal server")
       .setEmoji('<:KrunkerEsports:1103733400109588571>')
-      .setStyle(ButtonStyle.Link) as any;
+      .setStyle(ButtonStyle.Link)
 
-    player.send({ embeds: [dmembed], components: [button] }).catch(err => {
+    const actionrow = new ActionRowBuilder<ButtonBuilder>().addComponents(button)
+
+    player.send({ embeds: [dmembed], components: [actionrow] }).catch(err => {
       logger.send(`Couldn't dm **${player.tag}**`)
     })
 
