@@ -1,6 +1,5 @@
 import { Message, Client, ButtonBuilder, ActionRowBuilder, ButtonStyle, EmbedBuilder } from "discord.js";
 import { OWNERS } from "../../config";
-import { XMLHttpRequest } from "xhr2"
 
 export const AppealText = async (msg: Message, args: string[], client: Client) => {
 

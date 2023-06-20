@@ -1,4 +1,4 @@
-import { EmbedBuilder, Message, Client, Role, GuildMember, ChannelType, CategoryChannel, PermissionsBitField, TextChannel, User, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
+import { EmbedBuilder, Message, Client, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import { OWNERS } from "../../config";
 
 export const NewTic = async (msg: Message, args: string[], client: Client) => {
