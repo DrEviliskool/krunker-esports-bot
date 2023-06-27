@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <button onclick="showdata()">SHOW GRAPHQL DATA</button>
+
+    <script>
+
+        function showdata() {
+
+            const query = `
+    query upcomingTournaments{
+        upcomingTournaments {
+        ...TournamentCard
+        }
+        }
+        fragment TournamentCard on TournamentCard {
+        alias
+        tournamentType
+        tournamentStatus
+        bracketType
+        teamSize
+        maxTeams
+        deadline
+        name
+        token {
+        name
+        symbol
+        chain
+        }
+        game {
+        url
+        name
+        }
+        thumbnail
+        }
+        `;
+
+            
+        
+        fetch('https://web.prod.daory.net/graphql', {
+                method: "POST",
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'User-Agent': 'sjAyrfBtt6YcLnoU31IsbyMcxaV1lM'
+                },
+                body: JSON.stringify({
+                    query
+                })
+
+            }).then(response => {
+                return response.json()
+            }).then(data => {
+
+                console.log(data)
+
+            })
+        }
+    </script>
+
+</body>
+
+</html>
