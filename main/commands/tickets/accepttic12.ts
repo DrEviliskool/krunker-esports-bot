@@ -80,7 +80,7 @@ export const accepttic12 = async (interaction: Interaction, client: Client) => {
 
 
 
-        interaction.channel?.send({ content: `Ticket has been closed! Support team controls:`, components: [openticrow!] })
+        interaction.reply({ content: `Ticket has been closed! Support team controls:`, components: [openticrow!] })
 
       }, 1000 * 2);
 

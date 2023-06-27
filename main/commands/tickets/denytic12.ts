@@ -43,7 +43,9 @@ export const denytic12 = async (interaction: Interaction, client: Client) => {
 
         ticklogs.send({ embeds: [embedtwo] })
 
-        interaction.reply({ content: `Ticket has been closed! Support team controls:`, components: [openticrow!] })
+        interaction.reply({ content: `Ticket has been closed! Support team controls:`, components: [openticrow!] }).catch(err => {
+          console.log(err)
+        })
 
       } else {
         interaction.reply({ content: `Ticket must be closed`, ephemeral: true })

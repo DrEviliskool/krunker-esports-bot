@@ -222,7 +222,7 @@ client.on('interactionCreate', async (interaction) => {
   if (interaction.isButton()) {
 
     if (theinteractor.roles.cache.has(blacklistedrole?.id!)) {
-      interaction.followUp({ content: `You are ticket blacklisted, please contact any online support for more information.`, ephemeral: true })
+      interaction.reply({ content: `You are ticket blacklisted, please contact any online support for more information.`, ephemeral: true })
       return
 
     } else {
