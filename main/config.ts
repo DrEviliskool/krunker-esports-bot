@@ -18,6 +18,7 @@ export const OWNERS = [
     "282873860884398080", //N0N
     "605388525717684225", //erroR
     "934060085662064691", //stancl
+    "339056607013109763", //Leshawn Daquavius
 ] // ONLY PEOPLE WITH ACCESS
 
 export const serverarray = [
