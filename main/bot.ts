@@ -123,7 +123,6 @@ const logger = client.channels.cache.get('1103737409243451424') as TextChannel
 const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
 const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
 const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
-const esport = client.channels.cache.get('1097169881222365257') as TextChannel
 const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
 
@@ -192,7 +191,6 @@ async function thesubscriber() {
     await kpclog.send({ embeds: [unbanembed] });
     await ncklog.send({ embeds: [unbanembed] });
     await ckalog.send({ embeds: [unbanembed] });
-    await esport.send({ embeds: [unbanembed] });
     await admins.send({ embeds: [unbanembed] });
 
     logger.send(`EXPIRED UNBAN: ${unbanneduser.tag} (${unbannedid})`)

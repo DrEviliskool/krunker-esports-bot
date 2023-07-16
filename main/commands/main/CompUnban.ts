@@ -13,7 +13,6 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     const kpclog = client.channels.cache.get('801552076726730752') as  TextChannel
     const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
     const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
-    const esport = client.channels.cache.get('1097169881222365257') as TextChannel
     const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
 
@@ -56,7 +55,6 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     const unbanembed = new EmbedBuilder()
         .setTitle('New Esport UnBan!')
         .setDescription(`Responsible Admin: ${msg.author.tag} (${msg.author.id})`)
-        .setThumbnail((await client.guilds.fetch('623849289403334656')).iconURL())
         .setAuthor({ name: `${player.tag} (${player.id})`, iconURL: player.displayAvatarURL() })
         .setColor('Red')
         .setTimestamp()
@@ -64,7 +62,6 @@ export const CompUnban = async (msg: Message, args: string[], client: Client) =>
     kpclog.send({ embeds: [unbanembed] });
     ncklog.send({ embeds: [unbanembed] });
     ckalog.send({ embeds: [unbanembed] });
-    esport.send({ embeds: [unbanembed] });
     admins.send({ embeds: [unbanembed] });
 
     const doneembed = new EmbedBuilder()

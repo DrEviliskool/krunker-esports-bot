@@ -18,7 +18,6 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
   const kpclog = client.channels.cache.get('801552076726730752') as TextChannel
   const ncklog = client.channels.cache.get('1037019629853351996') as TextChannel
   const ckalog = client.channels.cache.get('1098035657668046960') as TextChannel
-  const esport = client.channels.cache.get('1097169881222365257') as TextChannel
   const admins = client.channels.cache.get('1060536650918281296') as TextChannel
 
   const service = new HumanizeDuration(new HumanizeDurationLanguage())
@@ -51,7 +50,6 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
               new EmbedBuilder()
                 .setTitle('All temp esport banned users:')
                 .setColor("#ffdc3a")
-                .setThumbnail((await client.guilds.fetch('623849289403334656')).iconURL())
                 .setTimestamp()
                 .addFields(
                   { name: `User Tag:`, value: `${unbanneduser.tag}`, inline: true },
@@ -180,9 +178,6 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
           { name: `Ban duration:`, value: `Permanent`, inline: true },
 
         )
-        .setThumbnail(
-          (await client.guilds.fetch('623849289403334656')).iconURL()
-        )
         .setAuthor({ name: `${player.tag} (${player.id})`, iconURL: player.displayAvatarURL() })
         .setColor('Red')
         .setTimestamp()
@@ -190,7 +185,6 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
       kpclog.send({ embeds: [banembed] });
       ncklog.send({ embeds: [banembed] });
       ckalog.send({ embeds: [banembed] });
-      esport.send({ embeds: [banembed] });
       admins.send({ embeds: [banembed] })
 
 
@@ -281,7 +275,6 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
         { name: `Time:`, value: `<t:${realtime}:R>` }
 
       )
-      .setThumbnail((await client.guilds.fetch('623849289403334656')).iconURL())
       .setAuthor({ name: `${player.tag} (${player.id})`, iconURL: player.displayAvatarURL() })
       .setColor('Red')
       .setTimestamp()
@@ -289,7 +282,6 @@ export const CompBan = async (msg: Message, args: string[], client: Client) => {
     kpclog.send({ embeds: [banembed] });
     ncklog.send({ embeds: [banembed] });
     ckalog.send({ embeds: [banembed] });
-    esport.send({ embeds: [banembed] });
     admins.send({ embeds: [banembed] })
 
     const currentchanneldoneemebed = new EmbedBuilder()
